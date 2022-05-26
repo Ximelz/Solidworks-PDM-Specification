@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Settings>
+  <Vault>PDM</Vault>
+  <ComparsionGlobalVariable>
+    <KeyVaultPair Key="Name" Value="Наименование" />
+    <KeyVaultPair Key="Designation" Value="Обозначение" />
+    <KeyVaultPair Key="DrawingPaperSize" Value="Формат" />
+    <KeyVaultPair Key="Section" Value="сп_Раздел" />
+    <KeyVaultPair Key="Note" Value="Примечания" />
+    <KeyVaultPair Key="Zone" Value="сп_Зона" />
+    <KeyVaultPair Key="Developer" Value="п_Разраб" />
+    <KeyVaultPair Key="Checker" Value="п_Пров" />
+    <KeyVaultPair Key="NormativeControl" Value="п_Н_контр" />
+    <KeyVaultPair Key="Approver" Value="п_Утв" />
+    <KeyVaultPair Key="Litera" Value="Лит" />
+    <KeyVaultPair Key="InvNumbOrigin" Value="а_п_Инв_№_подл" />
+    <KeyVaultPair Key="ReplacedInvNumb" Value="а_Взам_Инв_№" />
+    <KeyVaultPair Key="InvNumbDupl" Value="а_Инв_№_дубл" />
+    <KeyVaultPair Key="ReferenceNumb" Value="а_Справ_№" />
+    <KeyVaultPair Key="PrimaryApplication" Value="Перв_Примен" />
+  </ComparsionGlobalVariable>
+</Settings>
