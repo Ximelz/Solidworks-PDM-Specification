@@ -71,6 +71,9 @@
             this.NameComboBox = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.excelTemplateTextBox = new System.Windows.Forms.TextBox();
+            this.openXltxPath = new System.Windows.Forms.Button();
+            this.label21 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -85,7 +88,7 @@
             // 
             // CancelButton
             // 
-            this.CancelButton.Location = new System.Drawing.Point(263, 415);
+            this.CancelButton.Location = new System.Drawing.Point(262, 461);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(75, 23);
             this.CancelButton.TabIndex = 1;
@@ -95,7 +98,7 @@
             // 
             // SaveButton
             // 
-            this.SaveButton.Location = new System.Drawing.Point(182, 415);
+            this.SaveButton.Location = new System.Drawing.Point(181, 461);
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(75, 23);
             this.SaveButton.TabIndex = 2;
@@ -179,7 +182,7 @@
             this.panel1.Controls.Add(this.NameComboBox);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label3);
-            this.panel1.Location = new System.Drawing.Point(13, 115);
+            this.panel1.Location = new System.Drawing.Point(12, 161);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(325, 294);
             this.panel1.TabIndex = 7;
@@ -474,13 +477,42 @@
             this.label3.TabIndex = 0;
             this.label3.Text = "Настройка переменных текущего хранилища";
             // 
+            // excelTemplateTextBox
+            // 
+            this.excelTemplateTextBox.Location = new System.Drawing.Point(12, 134);
+            this.excelTemplateTextBox.Name = "excelTemplateTextBox";
+            this.excelTemplateTextBox.Size = new System.Drawing.Size(245, 20);
+            this.excelTemplateTextBox.TabIndex = 8;
+            // 
+            // openXltxPath
+            // 
+            this.openXltxPath.Location = new System.Drawing.Point(262, 132);
+            this.openXltxPath.Name = "openXltxPath";
+            this.openXltxPath.Size = new System.Drawing.Size(75, 23);
+            this.openXltxPath.TabIndex = 9;
+            this.openXltxPath.Text = "Обзор";
+            this.openXltxPath.UseVisualStyleBackColor = true;
+            this.openXltxPath.Click += new System.EventHandler(this.openXltxPath_Click);
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(13, 116);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(174, 13);
+            this.label21.TabIndex = 10;
+            this.label21.Text = "Место положение шаблона Excel";
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
-            this.ClientSize = new System.Drawing.Size(350, 450);
+            this.ClientSize = new System.Drawing.Size(350, 535);
+            this.Controls.Add(this.label21);
+            this.Controls.Add(this.openXltxPath);
+            this.Controls.Add(this.excelTemplateTextBox);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -546,5 +578,8 @@
         private System.Windows.Forms.ComboBox DesignationComboBox;
         private System.Windows.Forms.ComboBox NameComboBox;
         private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.TextBox excelTemplateTextBox;
+        private System.Windows.Forms.Button openXltxPath;
+        private System.Windows.Forms.Label label21;
     }
 }

@@ -31,19 +31,16 @@ namespace Solidworks_PDM_Specification
         {
             try
             {
-                System.Windows.Forms.DialogResult dialogResult = default(System.Windows.Forms.DialogResult);
+                DialogResult dialogResult;
                 dialogResult = openFileDialog1.ShowDialog();
-
-                if((DialogResult == System.Windows.Forms.DialogResult.OK))
+                if((DialogResult == DialogResult.OK))
                     return;
-
-                if (OpenFilePathTextBox.Text.Substring(openFileDialog1.FileName.Length - 7) != ".SLDASM")
+                if (openFileDialog1.FileName.Substring(openFileDialog1.FileName.Length - 7) != ".SLDASM")
                 {
                     MessageBox.Show("Не был выбран файл сборки. Выберите заново!");
                     return;
                 }
                 OpenFilePathTextBox.Text = openFileDialog1.FileName;
-
                 GetConfigurationsFile();
             }
             catch (System.Runtime.InteropServices.COMException ex)
@@ -81,20 +78,18 @@ namespace Solidworks_PDM_Specification
             IEdmFile17 file;
             IEdmVault7 vault2 = (IEdmVault7) vault;
             IEdmFolder5 ppoRetParentFolder;
-            file = (IEdmFile17)vault2.GetFileFromPath(OpenFilePathTextBox.Text, out ppoRetParentFolder);
             EdmStrLst5 cfgList = default(EdmStrLst5);
-            cfgList = file.GetConfigurations();
-
             IEdmPos5 pos = default(IEdmPos5);
-            pos = cfgList.GetHeadPosition();
             string cfgName = null;
+            file = (IEdmFile17)vault2.GetFileFromPath(OpenFilePathTextBox.Text, out ppoRetParentFolder);
+            cfgList = file.GetConfigurations();
+            pos = cfgList.GetHeadPosition();
             while (!pos.IsNull)
             {
                 cfgName = cfgList.GetNext(pos);
                 ConfigurationComboBox.Items.Add(cfgName);
             }
-            ConfigurationComboBox.Text = ConfigurationComboBox.Items[0].ToString();
-        }
+            ConfigurationComboBox.Text = ConfigurationComboBox.Items[0].ToString(); }
 
         private void ConfigurationComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {

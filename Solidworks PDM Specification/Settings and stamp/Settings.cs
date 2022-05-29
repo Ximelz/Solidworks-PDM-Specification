@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Solidworks_PDM_Specification
 {
@@ -11,11 +12,13 @@ namespace Solidworks_PDM_Specification
         {
             ComparsionGlobalVariable = new Dictionary<string, string>();
             Vault = "";
+            excelTemplate = Directory.GetCurrentDirectory() + "\\Specification.xltx";
             InitialDictionary();
         }
 
         public string Vault { get; set; }                                   //Переменная хранящая исходное хранилище
         public Dictionary<string, string> ComparsionGlobalVariable;         //Сопоставление переменных из программы глобальных переменным SolidWorks PDM
+        public string excelTemplate { set; get; }
 
         private void InitialDictionary()
         {

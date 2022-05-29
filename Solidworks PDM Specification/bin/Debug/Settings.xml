@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Settings>
+<Settings ExcelTemplate="D:\Specification.xltx">
   <Vault>PDM</Vault>
   <ComparsionGlobalVariable>
     <KeyVaultPair Key="Name" Value="Наименование" />

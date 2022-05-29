@@ -16,7 +16,7 @@ namespace Solidworks_PDM_Specification
     internal class XML_Convert
     {
         #region Import
-
+        
         public void Import(out Settings settings, string path)
         {
             string xml = File.ReadAllText(path);
@@ -31,6 +31,7 @@ namespace Solidworks_PDM_Specification
             }
 
             settings.Vault = XDocument.Parse(xml).Element("Settings").Element("Vault").Value;
+            settings.excelTemplate = XDocument.Parse(xml).Element("Settings").Attribute("ExcelTemplate").Value;
         }
 
         public void Import(out string pathSettings)
@@ -73,7 +74,7 @@ namespace Solidworks_PDM_Specification
             element.Section = item.Attribute("Section").Value;
             element.Note = item.Attribute("Note").Value;
             element.Zone = item.Attribute("Zone").Value;
-            element.Count = Convert.ToInt32(item.Attribute("Count"));
+            element.Count = Convert.ToInt32(item.Attribute("Count").Value);
 
             return element;
         }
@@ -118,13 +119,14 @@ namespace Solidworks_PDM_Specification
             XElement xmlParse = new XElement("Settings");
             XElement xmlParseVault = new XElement("Vault");
             XElement xmlParseDictionary = new XElement("ComparsionGlobalVariable");
-
+            XAttribute xAttributeExcelTemplate = new XAttribute("ExcelTemplate", settings.excelTemplate);
             xmlParseVault.Add(settings.Vault);
 
             foreach (KeyValuePair<string, string> keyValuePair in settings.ComparsionGlobalVariable)
                 xmlParseDictionary.Add(Export_Dictionary(keyValuePair.Key, keyValuePair.Value));
             xmlParse.Add(xmlParseVault);
             xmlParse.Add(xmlParseDictionary);
+            xmlParse.Add(xAttributeExcelTemplate);
             xmlParse.Save(path);
         }
 
@@ -181,6 +183,7 @@ namespace Solidworks_PDM_Specification
             parseElement.Add(xAttributeSection);
             parseElement.Add(xAttributeNote);
             parseElement.Add(xAttributeZone);
+            parseElement.Add(xAttributeCount);
 
             return parseElement;
         }
@@ -222,6 +225,7 @@ namespace Solidworks_PDM_Specification
             parseStamp.Add(xAttributeDateChecker);
             parseStamp.Add(xAttributeDateNormativeControl);
             parseStamp.Add(xAttributeDateApprover);
+            parseStamp.Add(xAttributeConfiguration);
             parseStamp.Add(stampElement);
 
             return parseStamp;

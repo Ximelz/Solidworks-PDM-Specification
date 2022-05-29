@@ -27,6 +27,8 @@ namespace Solidworks_PDM_Specification
 
             xml.Import(out settings, pathSettings);
             LoadComboBoxesFromSettings();
+
+            excelTemplateTextBox.Text = settings.excelTemplate;
         }
 
         private void SettingsForm_Load(object sender, EventArgs e)
@@ -192,6 +194,17 @@ namespace Solidworks_PDM_Specification
             InvNumbDuplComboBox.Items.Add(value);
             ReferenceNumbComboBox.Items.Add(value);
             PrimaryApplicationComboBox.Items.Add(value);
+        }
+
+        private void openXltxPath_Click(object sender, EventArgs e)
+        {
+            DialogResult dialogResult;
+            dialogResult = openFileDialog1.ShowDialog();
+            if (!(DialogResult == DialogResult.OK))
+                return;
+
+            excelTemplateTextBox.Text = openFileDialog1.FileName;
+
         }
     }
 }

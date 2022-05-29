@@ -62,6 +62,7 @@
             this.countTextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.countOldName = new System.Windows.Forms.Label();
+            this.exportToExcelButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // SettingsButton
@@ -356,11 +357,22 @@
             this.countOldName.TabIndex = 38;
             this.countOldName.Text = "Сохраненное число";
             // 
+            // exportToExcelButton
+            // 
+            this.exportToExcelButton.Location = new System.Drawing.Point(380, 243);
+            this.exportToExcelButton.Name = "exportToExcelButton";
+            this.exportToExcelButton.Size = new System.Drawing.Size(192, 23);
+            this.exportToExcelButton.TabIndex = 39;
+            this.exportToExcelButton.Text = "Передать в Excel";
+            this.exportToExcelButton.UseVisualStyleBackColor = true;
+            this.exportToExcelButton.Click += new System.EventHandler(this.exportToExcelButton_Click);
+            // 
             // SpecificationCreateForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(582, 613);
+            this.Controls.Add(this.exportToExcelButton);
             this.Controls.Add(this.countOldName);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.countTextBox);
@@ -440,6 +452,7 @@
         private System.Windows.Forms.TextBox countTextBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label countOldName;
+        private System.Windows.Forms.Button exportToExcelButton;
     }
 }
 

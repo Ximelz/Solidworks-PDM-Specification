@@ -26,32 +26,23 @@ namespace Solidworks_PDM_Specification
 
         public List<Element> GetListElements()
         {
-            if (!vault.IsLoggedIn)
-            {
-                pdmIsNotLogged = true;
-                return null;
-            }
-
             Elements = new List<Element>();
             List<RefFile> RefFiles = new List<RefFile>();
-            GetReferencedFiles(null, path, 0, "A", ref RefFiles, stamp.Configuration);
-
+            GetReferencedFiles(null, path, 0, "VKRB", ref RefFiles, stamp.Configuration);
             IEdmVault7 vault2 = null;
             vault2 = (IEdmVault7)vault;
             IEdmBatchListing4 BatchListing = default(IEdmBatchListing4);
             BatchListing = (IEdmBatchListing4)vault2.CreateUtility(EdmUtility.EdmUtil_BatchList);
-
             foreach (RefFile refFile in RefFiles)
-            {
-                ((IEdmBatchListing4)BatchListing).AddFileCfg(refFile.FilePath, DateTime.Now, (Convert.ToInt32(refFile.Level)), "@", Convert.ToInt32(EdmListFileFlags.EdmList_Nothing));
-            }
+                ((IEdmBatchListing4)BatchListing).AddFileCfg(refFile.FilePath, DateTime.Now, (Convert.ToInt32(refFile.Level)), 
+                                                refFile.Configuration, Convert.ToInt32(EdmListFileFlags.EdmList_Nothing));
             EdmListCol[] BatchListCols = null;
-            ((IEdmBatchListing4)BatchListing).CreateListEx("\n\nDescription\nNumber", Convert.ToInt32(EdmCreateListExFlags.Edmclef_MayReadFiles), ref BatchListCols, null);
+            ((IEdmBatchListing4)BatchListing).CreateListEx("\n\nDescription\nNumber", 
+                                            Convert.ToInt32(EdmCreateListExFlags.Edmclef_MayReadFiles), ref BatchListCols, null);
             EdmListFile2[] BatchListFiles = null;
             BatchListing.GetFiles2(ref BatchListFiles);
             int i = 0;
             IEdmFolder5 folder;
-            
             foreach (EdmListFile2 BatchFile in BatchListFiles)
             {
                 IEdmFile5 File = default(IEdmFile5);
@@ -60,10 +51,10 @@ namespace Solidworks_PDM_Specification
                 Elements[i].Count = RefFiles[i].Count;
                 i++;
             }
+            Elements.RemoveRange(0,1);
             stamp.usePdmFlag = true;
             return Elements;
         }
-        
 
         private void GetReferencedFiles(IEdmReference10 Reference, string FilePath, int Level, string ProjectName,
             ref List<RefFile> RefFiles, string configuration)
@@ -74,29 +65,24 @@ namespace Solidworks_PDM_Specification
                 {
                     IEdmFile5 File = null;
                     IEdmFolder5 ParentFolder = null;
-                    RefFiles.Add(new RefFile(FilePath, Level.ToString(), 1, "по умолчанию"));
+                    RefFiles.Add(new RefFile(FilePath, Level.ToString(), 1, stamp.Configuration));
                     File = vault.GetFileFromPath(FilePath, out ParentFolder);
                     GetStamp(File);
                     stamp.FilePath = FilePath;
                     Reference = (IEdmReference10)File.GetReferenceTree(ParentFolder.ID);
-                    //Debug.WriteLine(Reference.RefConfiguration);
                     GetReferencedFiles(Reference, "", Level + 1, ProjectName, ref RefFiles, configuration);
                 }
                 else
                 {
                     IEdmPos5 pos = default(IEdmPos5);
-                    IEdmReference10 Reference2 = (IEdmReference10)Reference;
-                    pos = Reference2.GetFirstChildPosition3(ProjectName, true, true, (int)EdmRefFlags.EdmRef_File, "по умолчанию",
-                        0);
+                    pos = Reference.GetFirstChildPosition3(ProjectName, true, true, (int)EdmRefFlags.EdmRef_File, 
+                                                            RefFiles[RefFiles.Count - 1].Configuration, 0);
                     IEdmReference10 @ref = default(IEdmReference10);
-
                     while ((!pos.IsNull))
                     {
                         @ref = (IEdmReference10)Reference.GetNextChild(pos);
-                        Debug.WriteLine(@ref.RefConfiguration);
                         RefFiles.Add(new RefFile(@ref.FoundPath, Level.ToString(), @ref.RefCount, @ref.RefConfiguration));
                     }
-
                 }
             }
             catch (System.Runtime.InteropServices.COMException ex)
@@ -114,54 +100,78 @@ namespace Solidworks_PDM_Specification
             IEdmEnumeratorVariable8 EnumVarObj = default(IEdmEnumeratorVariable8);
             EnumVarObj = (IEdmEnumeratorVariable8)File.GetEnumeratorVariable();
             object currentVar = null;
+
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Name"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.Name = currentVar.ToString();
+                stamp.Name = currentVar.ToString().Trim();
+
+            #region GetVar
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Designation"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.Designation = currentVar.ToString();
+                stamp.Designation = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["DrawingPaperSize"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.DrawingPaperSize = currentVar.ToString();
+                stamp.DrawingPaperSize = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Section"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.Section = currentVar.ToString();
+                stamp.Section = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Note"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.Note = currentVar.ToString();
+                stamp.Note = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Zone"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.Zone = currentVar.ToString();
+                stamp.Zone = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Developer"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.Developer = currentVar.ToString();
+                stamp.Developer = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Checker"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.Checker = currentVar.ToString();
+                stamp.Checker = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["NormativeControl"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.NormativeControl = currentVar.ToString();
+                stamp.NormativeControl = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Approver"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.Approver = currentVar.ToString();
+                stamp.Approver = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Litera"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.Litera = currentVar.ToString();
+                stamp.Litera = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["InvNumbOrigin"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.InvNumbOrigin = currentVar.ToString();
+                stamp.InvNumbOrigin = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["ReplacedInvNumb"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.ReplacedInvNumb = currentVar.ToString();
+                stamp.ReplacedInvNumb = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["InvNumbDupl"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.InvNumbDupl = currentVar.ToString();
+                stamp.InvNumbDupl = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["ReferenceNumb"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.ReferenceNumb = currentVar.ToString();
+                stamp.ReferenceNumb = currentVar.ToString().Trim();
+            if (currentVar != null)
+                EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Name"], stamp.Configuration, out currentVar);
+            if (currentVar != null)
+                stamp.Name = currentVar.ToString().Trim();
+            EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Designation"], stamp.Configuration, out currentVar);
+            if (currentVar != null)
+                stamp.Designation = currentVar.ToString().Trim();
+            EnumVarObj.GetVar(settings.ComparsionGlobalVariable["DrawingPaperSize"], stamp.Configuration, out currentVar);
+            if (currentVar != null)
+                stamp.DrawingPaperSize = currentVar.ToString().Trim();
+            EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Section"], stamp.Configuration, out currentVar);
+            if (currentVar != null)
+                stamp.Section = currentVar.ToString().Trim();
+            EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Note"], stamp.Configuration, out currentVar);
+            if (currentVar != null)
+                stamp.Note = currentVar.ToString().Trim();
+            EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Zone"], stamp.Configuration, out currentVar);
+            if (currentVar != null)
+                stamp.Zone = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["PrimaryApplication"], stamp.Configuration, out currentVar);
             if (currentVar != null)
-                stamp.PrimaryApplication = currentVar.ToString();
+                stamp.PrimaryApplication = currentVar.ToString().Trim();
+            #endregion
+
             EnumVarObj.CloseFile(false);
         }
 
@@ -171,24 +181,26 @@ namespace Solidworks_PDM_Specification
             IEdmEnumeratorVariable8 EnumVarObj = default(IEdmEnumeratorVariable8);
             EnumVarObj = (IEdmEnumeratorVariable8)File.GetEnumeratorVariable();
             object currentVar = null;
+            #region GetVar
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Name"], Configuration, out currentVar);
             if (currentVar != null)
-                element.Name = currentVar.ToString();
+                element.Name = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Designation"], Configuration, out currentVar);
             if (currentVar != null)
-                element.Designation = currentVar.ToString();
+                element.Designation = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["DrawingPaperSize"], Configuration, out currentVar);
             if (currentVar != null)
-                element.DrawingPaperSize = currentVar.ToString();
+                element.DrawingPaperSize = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Section"], Configuration, out currentVar);
             if (currentVar != null)
-                element.Section = currentVar.ToString();
+                element.Section = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Note"], Configuration, out currentVar);
             if (currentVar != null)
-                element.Note = currentVar.ToString();
+                element.Note = currentVar.ToString().Trim();
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Zone"], Configuration, out currentVar);
             if (currentVar != null)
-                element.Zone = currentVar.ToString();
+                element.Zone = currentVar.ToString().Trim();
+            #endregion
             EnumVarObj.CloseFile(false);
             if (element.Name.Trim() == "" & element.Designation.Trim() == "")
                 element.Name = "Имя отсутствует";
