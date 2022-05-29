@@ -1,6 +1,6 @@
 ﻿namespace Solidworks_PDM_Specification
 {
-    partial class SolidWorksPDMCreateForm
+    partial class SolidWorksPDMForm
     {
         /// <summary>
         /// Required designer variable.
@@ -33,11 +33,14 @@
             this.OpenFilePathTextBox = new System.Windows.Forms.TextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.OpenFileButton = new System.Windows.Forms.Button();
+            this.ConfigurationComboBox = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // OKButton
             // 
-            this.OKButton.Location = new System.Drawing.Point(12, 75);
+            this.OKButton.Location = new System.Drawing.Point(12, 141);
             this.OKButton.Name = "OKButton";
             this.OKButton.Size = new System.Drawing.Size(87, 30);
             this.OKButton.TabIndex = 0;
@@ -47,7 +50,7 @@
             // 
             // CancelButton
             // 
-            this.CancelButton.Location = new System.Drawing.Point(182, 75);
+            this.CancelButton.Location = new System.Drawing.Point(182, 141);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(87, 30);
             this.CancelButton.TabIndex = 1;
@@ -57,7 +60,7 @@
             // 
             // OpenFilePathTextBox
             // 
-            this.OpenFilePathTextBox.Location = new System.Drawing.Point(12, 24);
+            this.OpenFilePathTextBox.Location = new System.Drawing.Point(11, 36);
             this.OpenFilePathTextBox.Name = "OpenFilePathTextBox";
             this.OpenFilePathTextBox.Size = new System.Drawing.Size(165, 20);
             this.OpenFilePathTextBox.TabIndex = 2;
@@ -68,7 +71,7 @@
             // 
             // OpenFileButton
             // 
-            this.OpenFileButton.Location = new System.Drawing.Point(194, 24);
+            this.OpenFileButton.Location = new System.Drawing.Point(194, 34);
             this.OpenFileButton.Name = "OpenFileButton";
             this.OpenFileButton.Size = new System.Drawing.Size(75, 23);
             this.OpenFileButton.TabIndex = 3;
@@ -76,11 +79,41 @@
             this.OpenFileButton.UseVisualStyleBackColor = true;
             this.OpenFileButton.Click += new System.EventHandler(this.OpenFileButton_Click);
             // 
-            // SolidWorksPDMCreateForm
+            // ConfigurationComboBox
+            // 
+            this.ConfigurationComboBox.FormattingEnabled = true;
+            this.ConfigurationComboBox.Location = new System.Drawing.Point(12, 96);
+            this.ConfigurationComboBox.Name = "ConfigurationComboBox";
+            this.ConfigurationComboBox.Size = new System.Drawing.Size(164, 21);
+            this.ConfigurationComboBox.TabIndex = 4;
+            this.ConfigurationComboBox.SelectedIndexChanged += new System.EventHandler(this.ConfigurationComboBox_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 68);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(172, 13);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "Конфигурации выбранной сбоки";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(15, 13);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(131, 13);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Путь к исходному файлу";
+            // 
+            // SolidWorksPDMForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(282, 117);
+            this.ClientSize = new System.Drawing.Size(282, 183);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.ConfigurationComboBox);
             this.Controls.Add(this.OpenFileButton);
             this.Controls.Add(this.OpenFilePathTextBox);
             this.Controls.Add(this.CancelButton);
@@ -88,7 +121,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "SolidWorksPDMCreateForm";
+            this.Name = "SolidWorksPDMForm";
             this.Text = "Выбор файла из хранилища PDM";
             this.Load += new System.EventHandler(this.SolidWorksPDMCreateForm_Load);
             this.ResumeLayout(false);
@@ -103,5 +136,8 @@
         private System.Windows.Forms.TextBox OpenFilePathTextBox;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button OpenFileButton;
+        private System.Windows.Forms.ComboBox ConfigurationComboBox;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }

@@ -59,21 +59,27 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PDM\ChangeVault.cs">
+    <Compile Include="AddElement.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PDM\ChangeVault.Designer.cs">
-      <DependentUpon>ChangeVault.cs</DependentUpon>
+    <Compile Include="AddElement.Designer.cs">
+      <DependentUpon>AddElement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AddSection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddSection.Designer.cs">
+      <DependentUpon>AddSection.cs</DependentUpon>
     </Compile>
     <Compile Include="PDM\ReferenceFiles.cs" />
-    <Compile Include="RefFile.cs" />
+    <Compile Include="PDM\RefFile.cs" />
     <Compile Include="Settings and stamp\DrawingStamp.cs" />
     <Compile Include="PDM\Element.cs" />
-    <Compile Include="PDM\SolidWorksPDMCreateForm.cs">
+    <Compile Include="PDM\SolidWorksPDMForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PDM\SolidWorksPDMCreateForm.Designer.cs">
-      <DependentUpon>SolidWorksPDMCreateForm.cs</DependentUpon>
+    <Compile Include="PDM\SolidWorksPDMForm.Designer.cs">
+      <DependentUpon>SolidWorksPDMForm.cs</DependentUpon>
     </Compile>
     <Compile Include="SpecificationCreateForm.cs">
       <SubType>Form</SubType>
@@ -97,11 +103,14 @@
       <DependentUpon>StampSettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Settings and stamp\XML_Convert.cs" />
-    <EmbeddedResource Include="PDM\ChangeVault.resx">
-      <DependentUpon>ChangeVault.cs</DependentUpon>
+    <EmbeddedResource Include="AddElement.resx">
+      <DependentUpon>AddElement.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PDM\SolidWorksPDMCreateForm.resx">
-      <DependentUpon>SolidWorksPDMCreateForm.cs</DependentUpon>
+    <EmbeddedResource Include="AddSection.resx">
+      <DependentUpon>AddSection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PDM\SolidWorksPDMForm.resx">
+      <DependentUpon>SolidWorksPDMForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SpecificationCreateForm.resx">
       <DependentUpon>SpecificationCreateForm.cs</DependentUpon>

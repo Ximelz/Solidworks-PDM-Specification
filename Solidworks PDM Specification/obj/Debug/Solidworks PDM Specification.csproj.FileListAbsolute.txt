@@ -13,8 +13,6 @@ G:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specific
 G:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\bin\Debug\Newtonsoft.Json.xml
 G:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks_PDM_Specification.SpecificationCreateForm.resources
 G:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks PDM Specification.csproj.CopyComplete
-G:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks_PDM_Specification.SolidWorksPDMCreateForm.resources
-G:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks_PDM_Specification.ChangeVault.resources
 G:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks_PDM_Specification.StampSettingsForm.resources
 F:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\bin\Debug\Solidworks PDM Specification.exe.config
 F:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\bin\Debug\Solidworks PDM Specification.exe
@@ -34,3 +32,6 @@ F:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specific
 F:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks PDM Specification.csproj.CopyComplete
 F:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks PDM Specification.exe
 F:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks PDM Specification.pdb
+G:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks_PDM_Specification.AddSection.resources
+G:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks_PDM_Specification.AddElement.resources
+G:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks_PDM_Specification.SolidWorksPDMForm.resources

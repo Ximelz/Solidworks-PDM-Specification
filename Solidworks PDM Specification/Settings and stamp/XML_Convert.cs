@@ -49,12 +49,12 @@ namespace Solidworks_PDM_Specification
             stamp = new DrawingStamp();
 
             string xml = File.ReadAllText(path);
-
             List<XElement> ElementsInXML = XDocument.Parse(xml).Element("SpecificationFile").Element("Elements").Descendants("Element").ToList();
+            stamp = Import_Stamp(XDocument.Parse(xml).Element("SpecificationFile").Element("Stamp"));
             foreach (XElement item in ElementsInXML)
                 elements.Add(Import_Element(item));
 
-            stamp = Import_Stamp(XDocument.Parse(xml).Element("SpecificationFile").Element("Stamp"));
+            stamp.usePdmFlag = Convert.ToBoolean(XDocument.Parse(xml).Element("SpecificationFile").Attribute("UsePdmFlag").Value);
         }
 
         private (string, string) Import_Dictionary(XElement item)
@@ -73,7 +73,7 @@ namespace Solidworks_PDM_Specification
             element.Section = item.Attribute("Section").Value;
             element.Note = item.Attribute("Note").Value;
             element.Zone = item.Attribute("Zone").Value;
-            element.FilePath = item.Attribute("FilePath").Value;
+            element.Count = Convert.ToInt32(item.Attribute("Count"));
 
             return element;
         }
@@ -92,11 +92,21 @@ namespace Solidworks_PDM_Specification
             stamp.InvNumbDupl = item.Attribute("InvNumbDupl").Value;
             stamp.ReferenceNumb = item.Attribute("ReferenceNumb").Value;
             stamp.PrimaryApplication = item.Attribute("PrimaryApplication").Value;
+            stamp.FilePath = item.Attribute("FilePath").Value;
+            stamp.Configuration = item.Attribute("Configuration").Value;
             stamp.DateDeveloper = Convert.ToDateTime(item.Attribute("DateDeveloper").Value);
             stamp.DateChecker = Convert.ToDateTime(item.Attribute("DateChecker").Value);
             stamp.DateNormativeControl = Convert.ToDateTime(item.Attribute("DateNormativeControl").Value);
             stamp.DateApprover = Convert.ToDateTime(item.Attribute("DateApprover").Value);
 
+            Element element = Import_Element(item.Element("Element"));
+            stamp.Name = element.Name;
+            stamp.Designation = element.Designation;
+            stamp.DrawingPaperSize = element.DrawingPaperSize;
+            stamp.Zone = element.Zone;
+            stamp.Section = element.Section;
+            stamp.Note = element.Note;
+            stamp.Count = element.Count;
             return stamp;
         }
         #endregion
@@ -130,14 +140,18 @@ namespace Solidworks_PDM_Specification
         public void Export(List<Element> elements, DrawingStamp stamp, string path)
         {
             XElement xmlParse = new XElement("SpecificationFile");
+            XAttribute xAttributeUsePdmflag = new XAttribute("UsePdmFlag", stamp.usePdmFlag.ToString());
 
             XElement xmlListElements = new XElement("Elements");
             foreach (Element element in elements)
                 xmlListElements.Add(Export_Element(element));
 
             XElement xmlStamp = Export_Stamp(stamp);
+            xmlParse.Add(xAttributeUsePdmflag);
             xmlParse.Add(xmlStamp);
             xmlParse.Add(xmlListElements);
+            if (path.Substring(path.Length - 4) != ".xml")
+                path += ".xml";
             xmlParse.Save(path);
         }
 
@@ -159,7 +173,7 @@ namespace Solidworks_PDM_Specification
             XAttribute xAttributeSection = new XAttribute("Section", element.Section);
             XAttribute xAttributeNote = new XAttribute("Note", element.Note);
             XAttribute xAttributeZone = new XAttribute("Zone", element.Zone);
-            XAttribute xAttributeFilePath = new XAttribute("FilePath", element.FilePath);
+            XAttribute xAttributeCount = new XAttribute("Count", element.Count.ToString());
 
             parseElement.Add(xAttributeName);
             parseElement.Add(xAttributeDesignation);
@@ -167,7 +181,6 @@ namespace Solidworks_PDM_Specification
             parseElement.Add(xAttributeSection);
             parseElement.Add(xAttributeNote);
             parseElement.Add(xAttributeZone);
-            parseElement.Add(xAttributeFilePath);
 
             return parseElement;
         }
@@ -175,6 +188,7 @@ namespace Solidworks_PDM_Specification
         private XElement Export_Stamp(DrawingStamp stamp)
         {
             XElement parseStamp = new XElement("Stamp");
+            XElement stampElement = Export_Element(stamp);
             XAttribute xAttributeDeveloper = new XAttribute("Developer", stamp.Developer);
             XAttribute xAttributeChecker = new XAttribute("Checker", stamp.Checker);
             XAttribute xAttributeNormativeControl = new XAttribute("NormativeControl", stamp.NormativeControl);
@@ -185,11 +199,14 @@ namespace Solidworks_PDM_Specification
             XAttribute xAttributeInvNumbDupl = new XAttribute("InvNumbDupl", stamp.InvNumbDupl);
             XAttribute xAttributeReferenceNumb = new XAttribute("ReferenceNumb", stamp.ReferenceNumb);
             XAttribute xAttributePrimaryApplication = new XAttribute("PrimaryApplication", stamp.PrimaryApplication);
+            XAttribute xAttributeFilePath = new XAttribute("FilePath", stamp.FilePath);
+            XAttribute xAttributeConfiguration = new XAttribute("Configuration", stamp.Configuration);
             XAttribute xAttributeDateDeveloper = new XAttribute("DateDeveloper", stamp.DateDeveloper);
             XAttribute xAttributeDateChecker = new XAttribute("DateChecker", stamp.DateChecker);
             XAttribute xAttributeDateNormativeControl = new XAttribute("DateNormativeControl", stamp.DateNormativeControl);
             XAttribute xAttributeDateApprover = new XAttribute("DateApprover", stamp.DateApprover);
 
+            
             parseStamp.Add(xAttributeDeveloper);
             parseStamp.Add(xAttributeChecker);
             parseStamp.Add(xAttributeNormativeControl);
@@ -200,10 +217,12 @@ namespace Solidworks_PDM_Specification
             parseStamp.Add(xAttributeInvNumbDupl);
             parseStamp.Add(xAttributeReferenceNumb);
             parseStamp.Add(xAttributePrimaryApplication);
+            parseStamp.Add(xAttributeFilePath);
             parseStamp.Add(xAttributeDateDeveloper);
             parseStamp.Add(xAttributeDateChecker);
             parseStamp.Add(xAttributeDateNormativeControl);
             parseStamp.Add(xAttributeDateApprover);
+            parseStamp.Add(stampElement);
 
             return parseStamp;
         }

@@ -71,8 +71,6 @@
             this.NameComboBox = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -548,7 +546,5 @@
         private System.Windows.Forms.ComboBox DesignationComboBox;
         private System.Windows.Forms.ComboBox NameComboBox;
         private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
-        private System.Windows.Forms.SaveFileDialog saveFileDialog2;
     }
 }

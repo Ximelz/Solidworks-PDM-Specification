@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Solidworks_PDM_Specification
 {
@@ -11,24 +7,44 @@ namespace Solidworks_PDM_Specification
     /// </summary>
     public class DrawingStamp : Element
     {
+        public DrawingStamp()
+        {
+            developer = "";
+            checker = "";
+            normativeControl = "";
+            approver = "";
+            Litera = "";
+            InvNumbDupl = "";
+            InvNumbOrigin = "";
+            ReplacedInvNumb = "";
+            ReferenceNumb = "";
+            PrimaryApplication = "";
+            FilePath = "";
+            usePdmFlag = false;
+            Configuration = "";
+        }
 
-        private string developer = "";               //Разработал
-        private string checker = "";                 //Проверил
-        private string normativeControl = "";        //Нормоконтороль
-        private string approver = "";                //Утвердил
-        public string Litera = "";                   //Литера
+        private string developer;                                           //Разработал
+        private string checker;                                             //Проверил
+        private string normativeControl;                                    //Нормоконтороль
+        private string approver;                                            //Утвердил
 
-        public string InvNumbOrigin = "";            //Инвентарный номер подлинника по ГОСТ 2.501
-        public string ReplacedInvNumb = "";          //Инвентарный номер подлинника, взамен которого выпущен данный подлинник по ГОСТ 2.503
-        public string InvNumbDupl = "";              //Инвентарный номер дубликата по ГОСТ 2.502;
+        public string Litera { set; get; }                                  //Литера
+        public string InvNumbOrigin { set; get; }                           //Инвентарный номер подлинника по ГОСТ 2.501
+        public string ReplacedInvNumb { set; get; }                         //Инвентарный номер подлинника, взамен которого выпущен данный подлинник по ГОСТ 2.503
+        public string InvNumbDupl { set; get; }                             //Инвентарный номер дубликата по ГОСТ 2.502
 
-        public string ReferenceNumb = "";            //Обозначение документа, взамен или на основании которого выпущен данный документ;
-        public string PrimaryApplication = "";       //Первичное применение
+        public string ReferenceNumb { set; get; }                           //Обозначение документа, взамен или на основании которого выпущен данный документ
+        public string PrimaryApplication { set; get; }                      //Первичное применение
 
-        public DateTime DateDeveloper;              //Дата разработки
-        public DateTime DateChecker;                //Дата проверки
-        public DateTime DateNormativeControl;       //Дата проверки нормоконтролем
-        public DateTime DateApprover;               //Дата утверждения
+        public string FilePath { set; get; }                                //Путь к файлу текущего элемента
+        public string Configuration { set; get; }                           //Конфигурация исходной сборки
+        public bool usePdmFlag { set; get; }                                //Флаг, указывающий на принадлежность файла базе PDM
+
+        public DateTime DateDeveloper { set; get; }                 //Дата разработки
+        public DateTime DateChecker { set; get; }                   //Дата проверки
+        public DateTime DateNormativeControl { set; get; }          //Дата проверки нормоконтролем
+        public DateTime DateApprover { set; get; }                  //Дата утверждения
 
         public string Developer
         {
@@ -86,5 +102,5 @@ namespace Solidworks_PDM_Specification
             }
         }
     }
-    
+
 }

@@ -1,16 +1,8 @@
-﻿using System;
+﻿using EPDM.Interop.epdm;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.SqlTypes;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.IO;
-using EPDM.Interop.epdm;
-using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace Solidworks_PDM_Specification
 {
@@ -21,11 +13,12 @@ namespace Solidworks_PDM_Specification
         private IEdmVault5 vault;
         private XML_Convert xml;
         private bool saveResult = true;
+        private bool pdmIsNotLogged = false;
 
         public SettingsForm(Settings settings)
         {
             InitializeComponent();
-            
+
             xml = new XML_Convert();
             xml.Import(out string pathSettings);
             SettingsPathTextBox.Text = pathSettings;
@@ -38,7 +31,7 @@ namespace Solidworks_PDM_Specification
 
         private void SettingsForm_Load(object sender, EventArgs e)
         {
-            GetViewVaults();
+            pdmIsNotLogged = GetViewVaults();
             PdmLoad();
         }
 
@@ -105,7 +98,7 @@ namespace Solidworks_PDM_Specification
             xml.Export(SettingsPathTextBox.Text);
         }
 
-        private void GetViewVaults()
+        private bool GetViewVaults()
         {
             try
             {
@@ -130,7 +123,7 @@ namespace Solidworks_PDM_Specification
                     LoadComboBoxesFromSettings();
                 }
                 else if (VaultsComboBox.Items.Count > 0)
-                    VaultsComboBox.Text = (string) VaultsComboBox.Items[0];
+                    VaultsComboBox.Text = (string)VaultsComboBox.Items[0];
             }
             catch (System.Runtime.InteropServices.COMException ex)
             {
@@ -140,6 +133,7 @@ namespace Solidworks_PDM_Specification
             {
                 MessageBox.Show(ex.Message);
             }
+            return false;
         }
 
         private void VaultsComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -170,7 +164,7 @@ namespace Solidworks_PDM_Specification
         private void PdmLoad()
         {
             vault.LoginAuto(VaultsComboBox.Text, this.Handle.ToInt32());
-            IEdmVariableMgr5 VarMgr = (IEdmVariableMgr5) vault;
+            IEdmVariableMgr5 VarMgr = (IEdmVariableMgr5)vault;
             IEdmPos5 VarPos = VarMgr.GetFirstVariablePosition();
             while (!VarPos.IsNull)
             {

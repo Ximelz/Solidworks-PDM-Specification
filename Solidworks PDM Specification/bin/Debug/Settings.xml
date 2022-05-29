@@ -13,7 +13,7 @@
     <KeyVaultPair Key="NormativeControl" Value="п_Н_контр" />
     <KeyVaultPair Key="Approver" Value="п_Утв" />
     <KeyVaultPair Key="Litera" Value="Лит" />
-    <KeyVaultPair Key="InvNumbOrigin" Value="а_п_Инв_№_подл" />
+    <KeyVaultPair Key="InvNumbOrigin" Value="а_Инв_№_подл" />
     <KeyVaultPair Key="ReplacedInvNumb" Value="а_Взам_Инв_№" />
     <KeyVaultPair Key="InvNumbDupl" Value="а_Инв_№_дубл" />
     <KeyVaultPair Key="ReferenceNumb" Value="а_Справ_№" />

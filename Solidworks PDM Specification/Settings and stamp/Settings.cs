@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EPDM.Interop.epdm;
-using System.Xml.Linq;
-using System.Xml.Serialization;
+﻿using System.Collections.Generic;
 
 namespace Solidworks_PDM_Specification
 {
@@ -21,10 +13,10 @@ namespace Solidworks_PDM_Specification
             Vault = "";
             InitialDictionary();
         }
-        
+
         public string Vault { get; set; }                                   //Переменная хранящая исходное хранилище
         public Dictionary<string, string> ComparsionGlobalVariable;         //Сопоставление переменных из программы глобальных переменным SolidWorks PDM
-        
+
         private void InitialDictionary()
         {
             ComparsionGlobalVariable.Add("Name", "");
