@@ -75,7 +75,6 @@
       <DependentUpon>AddSection.cs</DependentUpon>
     </Compile>
     <Compile Include="PDM\ReferenceFiles.cs" />
-    <Compile Include="PDM\RefFile.cs" />
     <Compile Include="Settings and stamp\DrawingStamp.cs" />
     <Compile Include="PDM\Element.cs" />
     <Compile Include="PDM\SolidWorksPDMForm.cs">

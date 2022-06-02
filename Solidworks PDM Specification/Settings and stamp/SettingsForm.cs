@@ -52,10 +52,8 @@ namespace Solidworks_PDM_Specification
 
         private void SettingsButtonBrowserPath_Click(object sender, EventArgs e)
         {
-            DialogResult DialogResult;
-            DialogResult = openFileDialog1.ShowDialog();
 
-            if (!(DialogResult == DialogResult.OK))
+            if (!(openFileDialog1.ShowDialog() == DialogResult.OK))
                 return;
 
             SettingsPathTextBox.Text = openFileDialog1.FileName;
@@ -126,6 +124,8 @@ namespace Solidworks_PDM_Specification
                 }
                 else if (VaultsComboBox.Items.Count > 0)
                     VaultsComboBox.Text = (string)VaultsComboBox.Items[0];
+
+                return true;
             }
             catch (System.Runtime.InteropServices.COMException ex)
             {
@@ -198,12 +198,11 @@ namespace Solidworks_PDM_Specification
 
         private void openXltxPath_Click(object sender, EventArgs e)
         {
-            DialogResult dialogResult;
-            dialogResult = openFileDialog1.ShowDialog();
-            if (!(DialogResult == DialogResult.OK))
+            if (openFileDialog1.ShowDialog() != DialogResult.OK)
                 return;
 
             excelTemplateTextBox.Text = openFileDialog1.FileName;
+            settings.excelTemplate = excelTemplateTextBox.Text;
 
         }
     }

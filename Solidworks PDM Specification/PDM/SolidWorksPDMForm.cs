@@ -31,9 +31,7 @@ namespace Solidworks_PDM_Specification
         {
             try
             {
-                DialogResult dialogResult;
-                dialogResult = openFileDialog1.ShowDialog();
-                if((DialogResult == DialogResult.OK))
+                if(openFileDialog1.ShowDialog() != DialogResult.OK)
                     return;
                 if (openFileDialog1.FileName.Substring(openFileDialog1.FileName.Length - 7) != ".SLDASM")
                 {
@@ -87,9 +85,11 @@ namespace Solidworks_PDM_Specification
             while (!pos.IsNull)
             {
                 cfgName = cfgList.GetNext(pos);
-                ConfigurationComboBox.Items.Add(cfgName);
+                if (cfgName != "@")
+                    ConfigurationComboBox.Items.Add(cfgName);
             }
-            ConfigurationComboBox.Text = ConfigurationComboBox.Items[0].ToString(); }
+            ConfigurationComboBox.Text = ConfigurationComboBox.Items[0].ToString();
+        }
 
         private void ConfigurationComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {

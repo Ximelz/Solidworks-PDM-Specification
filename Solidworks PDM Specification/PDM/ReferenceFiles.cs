@@ -15,7 +15,6 @@ namespace Solidworks_PDM_Specification
         private string path;
         public List<Element> Elements;
         private IEdmVault5 vault;
-        public bool pdmIsNotLogged = false;
         public ReferenceFiles(string path, Settings settings, DrawingStamp stamp, IEdmVault5 vault)
         {
             this.path = path;
@@ -23,41 +22,17 @@ namespace Solidworks_PDM_Specification
             this.stamp = stamp;
             this.vault = vault;
         }
-
+        
         public List<Element> GetListElements()
         {
             Elements = new List<Element>();
-            List<RefFile> RefFiles = new List<RefFile>();
-            GetReferencedFiles(null, path, 0, "VKRB", ref RefFiles, stamp.Configuration);
-            IEdmVault7 vault2 = null;
-            vault2 = (IEdmVault7)vault;
-            IEdmBatchListing4 BatchListing = default(IEdmBatchListing4);
-            BatchListing = (IEdmBatchListing4)vault2.CreateUtility(EdmUtility.EdmUtil_BatchList);
-            foreach (RefFile refFile in RefFiles)
-                ((IEdmBatchListing4)BatchListing).AddFileCfg(refFile.FilePath, DateTime.Now, (Convert.ToInt32(refFile.Level)), 
-                                                refFile.Configuration, Convert.ToInt32(EdmListFileFlags.EdmList_Nothing));
-            EdmListCol[] BatchListCols = null;
-            ((IEdmBatchListing4)BatchListing).CreateListEx("\n\nDescription\nNumber", 
-                                            Convert.ToInt32(EdmCreateListExFlags.Edmclef_MayReadFiles), ref BatchListCols, null);
-            EdmListFile2[] BatchListFiles = null;
-            BatchListing.GetFiles2(ref BatchListFiles);
-            int i = 0;
-            IEdmFolder5 folder;
-            foreach (EdmListFile2 BatchFile in BatchListFiles)
-            {
-                IEdmFile5 File = default(IEdmFile5);
-                File = (IEdmFile5)vault.GetObject(EdmObjectType.EdmObject_File, BatchFile.mlFileID);
-                Elements.Add(GetElementFromVault(File, RefFiles[i].Configuration));
-                Elements[i].Count = RefFiles[i].Count;
-                i++;
-            }
-            Elements.RemoveRange(0,1);
+            GetReferencedFiles(null, path, 0, "VKRB", ref Elements, stamp.Configuration);
             stamp.usePdmFlag = true;
             return Elements;
         }
 
         private void GetReferencedFiles(IEdmReference10 Reference, string FilePath, int Level, string ProjectName,
-            ref List<RefFile> RefFiles, string configuration)
+            ref List<Element> Elements, string configuration)
         {
             try
             {
@@ -65,23 +40,25 @@ namespace Solidworks_PDM_Specification
                 {
                     IEdmFile5 File = null;
                     IEdmFolder5 ParentFolder = null;
-                    RefFiles.Add(new RefFile(FilePath, Level.ToString(), 1, stamp.Configuration));
                     File = vault.GetFileFromPath(FilePath, out ParentFolder);
                     GetStamp(File);
                     stamp.FilePath = FilePath;
-                    Reference = (IEdmReference10)File.GetReferenceTree(ParentFolder.ID);
-                    GetReferencedFiles(Reference, "", Level + 1, ProjectName, ref RefFiles, configuration);
+                    Reference = (IEdmReference10) File.GetReferenceTree(ParentFolder.ID);
+                    GetReferencedFiles(Reference, "", Level + 1, ProjectName, ref Elements, configuration);
                 }
                 else
                 {
                     IEdmPos5 pos = default(IEdmPos5);
-                    pos = Reference.GetFirstChildPosition3(ProjectName, true, true, (int)EdmRefFlags.EdmRef_File, 
-                                                            RefFiles[RefFiles.Count - 1].Configuration, 0);
+                    pos = Reference.GetFirstChildPosition3(ProjectName, true, true, (int) EdmRefFlags.EdmRef_File,
+                        stamp.Configuration, 0);
                     IEdmReference10 @ref = default(IEdmReference10);
+                    IEdmFile5 File = null;
+                    IEdmFolder5 ParentFolder = null;
                     while ((!pos.IsNull))
                     {
-                        @ref = (IEdmReference10)Reference.GetNextChild(pos);
-                        RefFiles.Add(new RefFile(@ref.FoundPath, Level.ToString(), @ref.RefCount, @ref.RefConfiguration));
+                        @ref = (IEdmReference10) Reference.GetNextChild(pos);
+                        File = vault.GetFileFromPath(@ref.FoundPath, out ParentFolder);
+                        Elements.Add(GetElementFromVault(File, @ref.RefConfiguration));
                     }
                 }
             }

@@ -14,29 +14,34 @@ namespace Solidworks_PDM_Specification
         private XML_Convert xml;
         public List<Element> Elements;
         private Element SelectElement;
+        private string currentDirectory;
+        private Dictionary<string, int> idSection = new Dictionary<string, int>()
+        {
+            {"Документация", 0}, {"Комплексы", 0},
+            { "Сборочные единицы", 0}, { "Детали", 0},
+            { "Стандартные изделия", 0}, { "Прочие изделия", 0},
+            { "Материалы", 0}, { "Комплекты", 0}
+        };
+        private Dictionary<string, List<Element>> nameSections;
 
         public SpecificationCreateForm()
         {
             InitializeComponent();
-            NameOldName.Text = "";
-            DesignationOldName.Text = "";
-            NoteOldName.Text = "";
-            ZoneOldName.Text = "";
-            DrawingPaperSizeOldName.Text = "";
-            countOldName.Text = "";
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            settings = new Settings();
+            currentDirectory = Directory.GetCurrentDirectory();
+            settings = new Settings(currentDirectory);
             stamp = new DrawingStamp();
             xml = new XML_Convert();
             Elements = new List<Element>();
-            if (!File.Exists(Directory.GetCurrentDirectory() + "\\PathWithSettings.xml"))
+
+            if (!File.Exists(currentDirectory + "\\PathWithSettings.xml"))
             {
-                xml.Export(Directory.GetCurrentDirectory() + "\\Settings.xml");
-                if (!File.Exists(Directory.GetCurrentDirectory() + "\\Settings.xml"))
-                    xml.Export(settings, Directory.GetCurrentDirectory() + "\\Settings.xml");
+                xml.Export(currentDirectory + "\\Settings.xml");
+                if (!File.Exists(currentDirectory + "\\Settings.xml"))
+                    xml.Export(settings, currentDirectory + "\\Settings.xml");
                 return;
             }
             xml.Import(out string path);
@@ -44,8 +49,8 @@ namespace Solidworks_PDM_Specification
                 xml.Import(out settings, path);
             else
             {
-                xml.Export(settings, Directory.GetCurrentDirectory() + "\\Settings.xml");
-                xml.Export(Directory.GetCurrentDirectory() + "\\Settings.xml");
+                xml.Export(settings, currentDirectory + "\\Settings.xml");
+                xml.Export(currentDirectory + "\\Settings.xml");
             }
         }
 
@@ -63,37 +68,7 @@ namespace Solidworks_PDM_Specification
             stamp = form.stemp;
             form.Dispose();
         }
-        private void applyButton_Click(object sender, EventArgs e)
-        {
-            if (SelectElement == null)
-                return;
 
-            if (!int.TryParse(countTextBox.Text, out int elementCount))
-            {
-                MessageBox.Show("Значение поля \"Количество\" не является числом");
-                return;
-            }
-            SelectElement.Name = nameTextBox.Text;
-            SelectElement.Designation = designationTextBox.Text;
-            SelectElement.DrawingPaperSize = drawingPaperSizeTextBox.Text;
-            SelectElement.Zone = zoneTextBox.Text;
-            SelectElement.Note = noteTextBox.Text;
-            SelectElement.Count = elementCount;
-
-            NameOldName.Text = SelectElement.Name;
-            DesignationOldName.Text = SelectElement.Designation;
-            NoteOldName.Text = SelectElement.Note;
-            ZoneOldName.Text = SelectElement.Zone;
-            DrawingPaperSizeOldName.Text = SelectElement.DrawingPaperSize;
-            countOldName.Text = SelectElement.Count.ToString();
-        }
-
-        private void resetButton_Click(object sender, EventArgs e)
-        {
-            if (SelectElement == null)
-                return;
-            UpdateValuesInTextBoxes();
-        }
 
         private void CreateSpecification_Click(object sender, EventArgs e)
         {
@@ -132,7 +107,7 @@ namespace Solidworks_PDM_Specification
             ReferenceFiles refFiles = new ReferenceFiles(stamp.FilePath, settings, stamp, vault);
             Elements = refFiles.GetListElements();
             stamp = refFiles.stamp;
-            UpdateSectionComboBox();
+            UpdateDataGrid(Elements);
         }
 
         private (IEdmVault5, bool) LogginInVault()
@@ -162,163 +137,137 @@ namespace Solidworks_PDM_Specification
             return (null, false);
         }
 
-        private void SectionComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void UpdateDataGrid(List<Element> elements)
         {
-            if (Elements.Count != 0)
-                UpdateElementsListBox();
-        }
-
-
-        private void elementsListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string[] parseString;
-            string name;
-
-            foreach (Element element in Elements)
+            nameSections = new Dictionary<string, List<Element>>()
             {
-                if (element.Section == "Детали" || element.Section == "Сборочные единицы")
+                {"Документация", new List<Element>()}, {"Комплексы", new List<Element>()},
+                {"Сборочные единицы", new List<Element>()}, {"Детали", new List<Element>()},
+                {"Стандартные изделия", new List<Element>()}, {"Прочие изделия", new List<Element>()},
+                {"Материалы", new List<Element>()}, {"Комплекты", new List<Element>()}
+            };
+            int count = 0;
+            foreach (Element element in elements)
+                if (nameSections.ContainsKey(element.Section))
                 {
-                    name = element.Designation.Trim();
-                    parseString = elementsListBox.SelectedItem.ToString().Trim().Split();
+                    nameSections[element.Section].Add(element);
+                    count++;
                 }
-                else
+            AddRows(nameSections, count);
+        }
+        private void AddRows(Dictionary<string, List<Element>> nameSections, int count)
+        {
+            int i = 0;
+            dataGridView1.Rows.AddCopy(dataGridView1.Rows.Count - 1);
+            foreach (KeyValuePair<string, List<Element>> keyValuePair in nameSections)
+            {
+                idSection[keyValuePair.Key] = dataGridView1.Rows.Count - 2;
+                dataGridView1.Rows[dataGridView1.Rows.Count - 2]
+                    .SetValues("", "", "", keyValuePair.Key);
+                dataGridView1.Rows.AddCopy(dataGridView1.Rows.Count - 2);
+                if (keyValuePair.Value.Count > 0)
                 {
-                    name = element.Name.Trim();
-                    parseString = new string[] { elementsListBox.SelectedItem.ToString().Trim() };
-                }
+                    foreach (Element element in keyValuePair.Value)
+                        AddNewRow(element);
 
-                if (name == parseString[0])
-                {
-                    SelectElement = element;
-                    UpdateValuesInTextBoxes();
-                    return;
                 }
+                i++;
             }
         }
 
-        private void UpdateSectionComboBox()
+        private void AddNewRow(Element element)
         {
-            SectionComboBox.Items.Clear();
-            SectionComboBox.Items.Add(Elements[0].Section);
-            int countSectionComboBox = SectionComboBox.Items.Count;
-            foreach (Element element in Elements)
+            dataGridView1.Rows[dataGridView1.Rows.Count - 2].SetValues(element.DrawingPaperSize, element.Zone, 
+                                    element.Designation, element.Name, element.Count.ToString(), element.Note);
+            dataGridView1.Rows.AddCopy(dataGridView1.Rows.Count - 2);
+        }
+
+        private List<Element> GetNewListElements()
+        {
+            List<Element> elements = new List<Element>();
+            int[] sections = new int[8];
+            string[] nameSections = new string[8];
+            int i = 0;
+            foreach (KeyValuePair<string, int> keyValuePair in idSection)
             {
-                bool flag = true;
-                for (int i = 0; i < countSectionComboBox; i++)
-                    if (SectionComboBox.Items[i].ToString() == element.Section)
-                        flag = false;
-                if (flag)
-                {
-                    SectionComboBox.Items.Add(element.Section);
-                    countSectionComboBox++;
-                }
+                sections[i] = keyValuePair.Value;
+                nameSections[i] = keyValuePair.Key;
+                i++;
             }
-            SectionComboBox.Text = SectionComboBox.Items[0].ToString();
-        }
-
-        private void UpdateElementsListBox()
-        {
-            elementsListBox.Items.Clear();
-            foreach (Element element in Elements)
-                if (element.Section == SectionComboBox.Text)
-                    elementsListBox.Items.Add(element.Designation + " " + element.Name);
-            if (elementsListBox.Items.Count !=0)
-                elementsListBox.SelectedItem = elementsListBox.Items[0];
-        }
-
-        private void UpdateValuesInTextBoxes()
-        {
-            nameTextBox.Text = SelectElement.Name;
-            designationTextBox.Text = SelectElement.Designation;
-            drawingPaperSizeTextBox.Text = SelectElement.DrawingPaperSize;
-            zoneTextBox.Text = SelectElement.Zone;
-            noteTextBox.Text = SelectElement.Note;
-            countTextBox.Text = SelectElement.Count.ToString();
-
-            NameOldName.Text = SelectElement.Name;
-            DesignationOldName.Text = SelectElement.Designation;
-            NoteOldName.Text = SelectElement.Note;
-            ZoneOldName.Text = SelectElement.Zone;
-            DrawingPaperSizeOldName.Text = SelectElement.DrawingPaperSize;
-            countOldName.Text = SelectElement.Count.ToString();
-        }
-
-        private void addSection_Click(object sender, EventArgs e)
-        {
-            AddSection form = new AddSection();
-            form.ShowDialog();
-
-            if (!form.closeFlag)
-            {
-                bool exitFlag = false;
-                foreach (var item in SectionComboBox.Items)
-                    if (item.ToString() == form.section)
+            i = 1;
+            int rowsCount = dataGridView1.Rows.Count - 2;
+            for (int j = 1; j < rowsCount; j++)
+                if (i < 9)
+                {
+                    if (j < sections[i])
                     {
-                        MessageBox.Show("Такой раздел уже существует");
-                        exitFlag = true;
+                        AddElementFromDataGrid(ref elements, j, nameSections[i - 1]);
                     }
-
-                if (!exitFlag)
-                {
-                    SectionComboBox.Items.Add(form.section);
-                    if (SectionComboBox.Text == "")
-                        SectionComboBox.Text = SectionComboBox.Items[0].ToString();
+                    else
+                    {
+                        i++;
+                    }
                 }
-            }
-            form.Dispose();
+
+            return elements;
         }
 
-        private void addElementButton_Click(object sender, EventArgs e)
-        {
-            if (SectionComboBox.Items.Count == 0)
-            {
-                MessageBox.Show("Невозможно добавить элемент, так как небыли добавлены разделы.");
-                return;
-            }
 
-            List<string> sections = new List<string>();
-            foreach (var item in SectionComboBox.Items)
-                sections.Add(item.ToString());
-            AddElement form = new AddElement(sections);
-            form.ShowDialog();
-            if (!form.closeFlag)
-            {
-                Elements.Add(form.element);
-                UpdateElementsListBox();
-            }
 
-            form.Dispose();
-        }
+
+
+
 
         private void OpenFileButton_Click(object sender, EventArgs e)
         {
             openFileDialog1.Filter = "Xml files(*.xml)|*.xml|All files(*.*)|*.*";
             XML_Convert xml = new XML_Convert();
-            DialogResult DialogResult;
-            DialogResult = openFileDialog1.ShowDialog();
-            if (!(DialogResult == DialogResult.OK))
+            DialogResult DialogOpenResult;
+            DialogOpenResult = openFileDialog1.ShowDialog();
+            if (!(DialogOpenResult == DialogResult.OK))
                 return;
             xml.Import(out Elements, out stamp, openFileDialog1.FileName);
             if (stamp.usePdmFlag)
                 UpdateSpecificationButton.Enabled = true;
             else
                 UpdateSpecificationButton.Enabled = false;
-            UpdateSectionComboBox();
+            UpdateDataGrid(Elements);
         }
 
         private void SaveFileButton_Click(object sender, EventArgs e)
         {
             saveFileDialog1.Filter = "Xml files(*.xml)|*.xml|All files(*.*)|*.*";
             XML_Convert xml = new XML_Convert();
-            DialogResult DialogResult;
-            DialogResult = saveFileDialog1.ShowDialog();
-            if (!(DialogResult == DialogResult.OK))
+            DialogResult DialogSaveResult;
+            DialogSaveResult = saveFileDialog1.ShowDialog();
+            if (!(DialogSaveResult == DialogResult.OK))
                 return;
-            xml.Export(Elements, stamp, saveFileDialog1.FileName);
+            xml.Export(GetNewListElements(), stamp, saveFileDialog1.FileName);
         }
 
         private void exportToExcelButton_Click(object sender, EventArgs e)
         {
+           exportToExcel(GetNewListElements());
+        }
+        private void AddElementFromDataGrid(ref List<Element> Elements, int i, string section)
+        {
+            int currentIndex = Elements.Count;
+            Elements.Add(new Element());
+            Elements[currentIndex].DrawingPaperSize = dataGridView1.Rows[i].Cells[0].Value.ToString();
+            Elements[currentIndex].Zone = dataGridView1.Rows[i].Cells[1].Value.ToString();
+            Elements[currentIndex].Designation = dataGridView1.Rows[i].Cells[2].Value.ToString();
+            Elements[currentIndex].Name = dataGridView1.Rows[i].Cells[3].Value.ToString();
+            if (int.TryParse(dataGridView1.Rows[i].Cells[4].Value.ToString(), out int count))
+                Elements[currentIndex].Count = count;
+            else
+                Elements[currentIndex].Count = 0;
+            Elements[currentIndex].Note = dataGridView1.Rows[i].Cells[5].Value.ToString();
+            Elements[currentIndex].Section = section;
+        }
+
+        private void exportToExcel(List<Element> elements)
+        {
+
             Dictionary<string, List<Element>> nameSections = new Dictionary<string, List<Element>>()
             {
                 {"Документация", new List<Element>()}, {"Комплексы", new List<Element>()},
@@ -329,7 +278,7 @@ namespace Solidworks_PDM_Specification
             foreach (Element element in Elements)
                 if (nameSections.ContainsKey(element.Section))
                     nameSections[element.Section].Add(element);
-
+            //using (var workbook = new Workbook($"{currentDirectory}\\Specification.xltx"))
             using (var workbook = new Workbook(settings.excelTemplate))
             {
                 Worksheet ws = workbook.Worksheets["Specification_sheet_1"];
@@ -343,32 +292,31 @@ namespace Solidworks_PDM_Specification
                 {
                     if (keyValuePair.Value.Count > 0)
                     {
-
                         cellIndex += 2;
-                        if (cellIndex < maxCellIndex)
-                        {
-                            cell = ws.Cells["AI" + cellIndex];
-                            cell.PutValue(keyValuePair.Key);
-                            Style style = cell.GetStyle();
-                            style.HorizontalAlignment = TextAlignmentType.Center;
-                            style.Font.Underline = FontUnderlineType.Single;
-                            style.Font.IsBold = true;
-                            cell.SetStyle(style);
-                        }
+                        cell = ws.Cells["AI" + cellIndex];
+                        cell.PutValue(keyValuePair.Key);
+                        Style style = cell.GetStyle();
+                        style.HorizontalAlignment = TextAlignmentType.Center;
+                        style.Font.Underline = FontUnderlineType.Single;
+                        style.Font.IsBold = true;
+                        cell.SetStyle(style);
                         cellIndex += 4;
-
                         int listCount = keyValuePair.Value.Count;
-                        AddElementsOnSpecificationForm(ref ws, ref cellIndex, maxCellIndex, ref listCount, ref position, 
+                        AddElementsOnSpecificationForm(ref ws, ref cellIndex, maxCellIndex, ref listCount, ref position,
                                                         keyValuePair.Value, ref Lists, workbook);
                     }
                 }
-
                 ws = workbook.Worksheets["Specification_sheet_1"];
-                cell = ws.Cells["BH67" + cellIndex];
+                cell = ws.Cells["BH67"];
                 cell.PutValue(Lists);
                 WorksheetCollection wc = workbook.Worksheets;
                 wc.RemoveAt(wc.Count - 1);
-                workbook.Save($"D:\\{stamp.Designation} {stamp.Name}.xls");
+                saveFileDialog1.Filter = "Xls files(*.xls)|*.xls|All files(*.*)|*.*";
+                if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+                    return;
+                string saveFileName = saveFileDialog1.FileName;
+                string addFileFormat = saveFileName.Substring(saveFileName.Length - 4) == ".xls" ? "" : ".xls";
+                workbook.Save(saveFileDialog1.FileName + addFileFormat);
             }
         }
 
@@ -376,7 +324,7 @@ namespace Solidworks_PDM_Specification
         {
             Cell cell;
             int i = 0;
-            while (cellIndex <= maxIndex && listCount > i)
+            while (listCount > i)
             {
                 if (elements[i].Count / 27 + (elements[i].Count % 27 != 0 ? 1 : 0) > (maxIndex - cellIndex) / 2)
                 {
@@ -427,6 +375,8 @@ namespace Solidworks_PDM_Specification
             cell = worksheet.Cells["L" + cellIndex];
             if (designation.Remove(0, 27).Length > 27)
                 SplitDesignation(worksheet, ref cellIndex, designation, cell);
+            else
+                cell.PutValue(designation);
         }
 
         private void SetStamp(Worksheet worksheet, int Lists)
@@ -457,7 +407,7 @@ namespace Solidworks_PDM_Specification
                 cell.PutValue(stamp.NormativeControl);
                 cell = worksheet.Cells["W69"];
                 cell.PutValue(stamp.DateNormativeControl.ToString("dd.MM.yyyy"));
-                
+
                 cell = worksheet.Cells["K70"];
                 cell.PutValue(stamp.Approver);
                 cell = worksheet.Cells["W70"];
@@ -473,7 +423,7 @@ namespace Solidworks_PDM_Specification
                 cell.PutValue(stamp.Litera);
 
                 cell = worksheet.Cells["AW68"];
-                cell.PutValue("МАИ Кафедра 316");
+                cell.PutValue("АО НИИТМ");
             }
             else
             {
@@ -483,6 +433,12 @@ namespace Solidworks_PDM_Specification
                 cell = worksheet.Cells["BK70"];
                 cell.PutValue(Lists);
             }
+        }
+
+        private void AddButton_Click(object sender, EventArgs e)
+        {
+            int index = dataGridView1.CurrentRow.Index;
+            dataGridView1.Rows.InsertCopy(index, index + 1);
         }
     }
 }

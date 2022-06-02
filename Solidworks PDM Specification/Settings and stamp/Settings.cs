@@ -8,11 +8,11 @@ namespace Solidworks_PDM_Specification
     /// </summary>
     public class Settings
     {
-        public Settings()
+        public Settings(string currentPath)
         {
             ComparsionGlobalVariable = new Dictionary<string, string>();
             Vault = "";
-            excelTemplate = Directory.GetCurrentDirectory() + "\\Specification.xltx";
+            //excelTemplate = currentPath + "\\Specification.xltx";
             InitialDictionary();
         }
 

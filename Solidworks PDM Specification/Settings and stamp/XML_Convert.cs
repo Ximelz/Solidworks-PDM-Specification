@@ -20,7 +20,7 @@ namespace Solidworks_PDM_Specification
         public void Import(out Settings settings, string path)
         {
             string xml = File.ReadAllText(path);
-            settings = new Settings();
+            settings = new Settings("");
 
             List<XElement> ElementsInXML = XDocument.Parse(xml).Element("Settings").Element("ComparsionGlobalVariable").Descendants("KeyVaultPair").ToList();
             (string, string) tuple = ("","");
@@ -31,7 +31,9 @@ namespace Solidworks_PDM_Specification
             }
 
             settings.Vault = XDocument.Parse(xml).Element("Settings").Element("Vault").Value;
-            settings.excelTemplate = XDocument.Parse(xml).Element("Settings").Attribute("ExcelTemplate").Value;
+            string excelTemplateValue = XDocument.Parse(xml).Element("Settings").Attribute("ExcelTemplate").Value;
+            if (File.Exists(excelTemplateValue))
+                settings.excelTemplate = excelTemplateValue;
         }
 
         public void Import(out string pathSettings)
