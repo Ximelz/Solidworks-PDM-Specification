@@ -2,6 +2,7 @@
 using EPDM.Interop.epdm;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
@@ -41,7 +42,16 @@ namespace Solidworks_PDM_Specification
             {
                 xml.Export(currentDirectory + "\\Settings.xml");
                 if (!File.Exists(currentDirectory + "\\Settings.xml"))
+                {
+                    settings.excelTemplate = currentDirectory + "\\Specification.xltx";
                     xml.Export(settings, currentDirectory + "\\Settings.xml");
+                    return;
+                }
+                if (!File.Exists(settings.excelTemplate))
+                {
+                    settings.excelTemplate = currentDirectory + "\\Specification.xltx";
+                    xml.Export(settings, currentDirectory + "\\Settings.xml");
+                }
                 return;
             }
             xml.Import(out string path);
@@ -51,6 +61,11 @@ namespace Solidworks_PDM_Specification
             {
                 xml.Export(settings, currentDirectory + "\\Settings.xml");
                 xml.Export(currentDirectory + "\\Settings.xml");
+            }
+            if (!File.Exists(settings.excelTemplate))
+            {
+                settings.excelTemplate = currentDirectory + "\\Specification.xltx";
+                xml.Export(settings, currentDirectory + "\\Settings.xml");
             }
         }
 
@@ -169,7 +184,6 @@ namespace Solidworks_PDM_Specification
                 {
                     foreach (Element element in keyValuePair.Value)
                         AddNewRow(element);
-
                 }
                 i++;
             }
@@ -181,41 +195,6 @@ namespace Solidworks_PDM_Specification
                                     element.Designation, element.Name, element.Count.ToString(), element.Note);
             dataGridView1.Rows.AddCopy(dataGridView1.Rows.Count - 2);
         }
-
-        private List<Element> GetNewListElements()
-        {
-            List<Element> elements = new List<Element>();
-            int[] sections = new int[8];
-            string[] nameSections = new string[8];
-            int i = 0;
-            foreach (KeyValuePair<string, int> keyValuePair in idSection)
-            {
-                sections[i] = keyValuePair.Value;
-                nameSections[i] = keyValuePair.Key;
-                i++;
-            }
-            i = 1;
-            int rowsCount = dataGridView1.Rows.Count - 2;
-            for (int j = 1; j < rowsCount; j++)
-                if (i < 9)
-                {
-                    if (j < sections[i])
-                    {
-                        AddElementFromDataGrid(ref elements, j, nameSections[i - 1]);
-                    }
-                    else
-                    {
-                        i++;
-                    }
-                }
-
-            return elements;
-        }
-
-
-
-
-
 
 
         private void OpenFileButton_Click(object sender, EventArgs e)
@@ -249,6 +228,36 @@ namespace Solidworks_PDM_Specification
         {
            exportToExcel(GetNewListElements());
         }
+
+        private List<Element> GetNewListElements()
+        {
+            List<Element> elements = new List<Element>();
+            int[] sections = new int[8];
+            string[] nameSections = new string[8];
+            int i = 0;
+            foreach (KeyValuePair<string, int> keyValuePair in idSection)
+            {
+                sections[i] = keyValuePair.Value;
+                nameSections[i] = keyValuePair.Key;
+                i++;
+            }
+            i = 1;
+            int rowsCount = dataGridView1.Rows.Count - 2;
+            for (int j = 1; j < rowsCount; j++)
+                if (i < 9)
+                {
+                    if (j < sections[i])
+                    {
+                        AddElementFromDataGrid(ref elements, j, nameSections[i - 1]);
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+
+            return elements;
+        }
         private void AddElementFromDataGrid(ref List<Element> Elements, int i, string section)
         {
             int currentIndex = Elements.Count;
@@ -278,7 +287,6 @@ namespace Solidworks_PDM_Specification
             foreach (Element element in Elements)
                 if (nameSections.ContainsKey(element.Section))
                     nameSections[element.Section].Add(element);
-            //using (var workbook = new Workbook($"{currentDirectory}\\Specification.xltx"))
             using (var workbook = new Workbook(settings.excelTemplate))
             {
                 Worksheet ws = workbook.Worksheets["Specification_sheet_1"];
@@ -311,12 +319,14 @@ namespace Solidworks_PDM_Specification
                 cell.PutValue(Lists);
                 WorksheetCollection wc = workbook.Worksheets;
                 wc.RemoveAt(wc.Count - 1);
+                saveFileDialog1.FileName = stamp.Designation + " " + stamp.Name + ".xls";
                 saveFileDialog1.Filter = "Xls files(*.xls)|*.xls|All files(*.*)|*.*";
                 if (saveFileDialog1.ShowDialog() != DialogResult.OK)
                     return;
                 string saveFileName = saveFileDialog1.FileName;
                 string addFileFormat = saveFileName.Substring(saveFileName.Length - 4) == ".xls" ? "" : ".xls";
-                workbook.Save(saveFileDialog1.FileName + addFileFormat);
+                workbook.Save(saveFileName + addFileFormat);
+                Process.Start(saveFileName + addFileFormat);
             }
         }
 
@@ -347,8 +357,8 @@ namespace Solidworks_PDM_Specification
                 cell = worksheet.Cells["I" + cellIndex];
                 cell.PutValue(position.ToString());
 
-                cell = worksheet.Cells["AI" + cellIndex];
-                cell.PutValue(elements[i].Name);
+                cell = worksheet.Cells["L" + cellIndex];
+                cell.PutValue(elements[i].Designation);
 
                 cell = worksheet.Cells["BD" + cellIndex];
                 cell.PutValue(elements[i].Count.ToString());
@@ -356,11 +366,11 @@ namespace Solidworks_PDM_Specification
                 cell = worksheet.Cells["BG" + cellIndex];
                 cell.PutValue(elements[i].Note);
 
-                cell = worksheet.Cells["L" + cellIndex];
-                if (elements[i].Designation.Length > 27)
-                    SplitDesignation(worksheet, ref cellIndex, elements[i].Designation, cell);
+                cell = worksheet.Cells["AI" + cellIndex];
+                if (elements[i].Name.Length > 27)
+                    SplitDesignation(worksheet, ref cellIndex, elements[i].Name, cell);
                 else
-                    cell.PutValue(elements[i].Designation);
+                    cell.PutValue(elements[i].Name);
 
                 position++;
                 i++;
@@ -372,11 +382,11 @@ namespace Solidworks_PDM_Specification
         {
             cell.PutValue(designation.Substring(0, 27));
             cellIndex += 2;
-            cell = worksheet.Cells["L" + cellIndex];
+            cell = worksheet.Cells["AI" + cellIndex];
             if (designation.Remove(0, 27).Length > 27)
-                SplitDesignation(worksheet, ref cellIndex, designation, cell);
+                SplitDesignation(worksheet, ref cellIndex, designation.Remove(0, 27), cell);
             else
-                cell.PutValue(designation);
+                cell.PutValue(designation.Substring(27));
         }
 
         private void SetStamp(Worksheet worksheet, int Lists)
@@ -396,22 +406,26 @@ namespace Solidworks_PDM_Specification
                 cell = worksheet.Cells["K66"];
                 cell.PutValue(stamp.Developer);
                 cell = worksheet.Cells["W66"];
-                cell.PutValue(stamp.DateDeveloper.ToString("dd.MM.yyyy"));
+                if(stamp.DateDeveloper.ToString("dd.MM.yyyy") != "01.01.0001")
+                    cell.PutValue(stamp.DateDeveloper.ToString("dd.MM.yyyy"));
 
                 cell = worksheet.Cells["K67"];
                 cell.PutValue(stamp.Checker);
                 cell = worksheet.Cells["W67"];
-                cell.PutValue(stamp.DateChecker.ToString("dd.MM.yyyy"));
+                if (stamp.DateChecker.ToString("dd.MM.yyyy") != "01.01.0001")
+                    cell.PutValue(stamp.DateChecker.ToString("dd.MM.yyyy"));
 
                 cell = worksheet.Cells["K69"];
                 cell.PutValue(stamp.NormativeControl);
                 cell = worksheet.Cells["W69"];
-                cell.PutValue(stamp.DateNormativeControl.ToString("dd.MM.yyyy"));
+                if (stamp.DateNormativeControl.ToString("dd.MM.yyyy") != "01.01.0001")
+                    cell.PutValue(stamp.DateNormativeControl.ToString("dd.MM.yyyy"));
 
                 cell = worksheet.Cells["K70"];
                 cell.PutValue(stamp.Approver);
                 cell = worksheet.Cells["W70"];
-                cell.PutValue(stamp.DateApprover.ToString("dd.MM.yyyy"));
+                if (stamp.DateApprover.ToString("dd.MM.yyyy") != "01.01.0001")
+                    cell.PutValue(stamp.DateApprover.ToString("dd.MM.yyyy"));
 
                 cell = worksheet.Cells["Z66"];
                 cell.PutValue(stamp.Name);

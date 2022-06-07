@@ -83,6 +83,10 @@ namespace Solidworks_PDM_Specification
         private DrawingStamp Import_Stamp(XElement item)
         {
             DrawingStamp stamp = new DrawingStamp();
+            stamp.DateDeveloper = Convert.ToDateTime(item.Attribute("DateDeveloper").Value);
+            stamp.DateChecker = Convert.ToDateTime(item.Attribute("DateChecker").Value);
+            stamp.DateNormativeControl = Convert.ToDateTime(item.Attribute("DateNormativeControl").Value);
+            stamp.DateApprover = Convert.ToDateTime(item.Attribute("DateApprover").Value);
             stamp.Developer = item.Attribute("Developer").Value;
             stamp.Checker = item.Attribute("Checker").Value;
             stamp.NormativeControl = item.Attribute("NormativeControl").Value;
@@ -97,10 +101,6 @@ namespace Solidworks_PDM_Specification
             stamp.PrimaryApplication = item.Attribute("PrimaryApplication").Value;
             stamp.FilePath = item.Attribute("FilePath").Value;
             stamp.Configuration = item.Attribute("Configuration").Value;
-            stamp.DateDeveloper = Convert.ToDateTime(item.Attribute("DateDeveloper").Value);
-            stamp.DateChecker = Convert.ToDateTime(item.Attribute("DateChecker").Value);
-            stamp.DateNormativeControl = Convert.ToDateTime(item.Attribute("DateNormativeControl").Value);
-            stamp.DateApprover = Convert.ToDateTime(item.Attribute("DateApprover").Value);
 
             Element element = Import_Element(item.Element("Element"));
             stamp.Name = element.Name;
@@ -121,7 +121,11 @@ namespace Solidworks_PDM_Specification
             XElement xmlParse = new XElement("Settings");
             XElement xmlParseVault = new XElement("Vault");
             XElement xmlParseDictionary = new XElement("ComparsionGlobalVariable");
-            XAttribute xAttributeExcelTemplate = new XAttribute("ExcelTemplate", settings.excelTemplate);
+            XAttribute xAttributeExcelTemplate;
+            if (settings.excelTemplate != null)
+                xAttributeExcelTemplate = new XAttribute("ExcelTemplate", settings.excelTemplate);
+            else
+                xAttributeExcelTemplate = new XAttribute("ExcelTemplate", Directory.GetCurrentDirectory() + "\\ExelTemplate.xltx");
             xmlParseVault.Add(settings.Vault);
 
             foreach (KeyValuePair<string, string> keyValuePair in settings.ComparsionGlobalVariable)
