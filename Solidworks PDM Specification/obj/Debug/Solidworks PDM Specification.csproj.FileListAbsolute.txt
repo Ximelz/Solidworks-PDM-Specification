@@ -58,4 +58,9 @@ D:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specific
 D:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks PDM Specification.pdb
 F:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\bin\Debug\Aspose.Cells.dll
 F:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\bin\Debug\Aspose.Cells.xml
+<<<<<<< HEAD
+=======
+F:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks_PDM_Specification.AddElement.resources
+F:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks_PDM_Specification.AddSection.resources
+>>>>>>> a27d773131a59a8c6a771899e78c87332da9b792
 F:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\obj\Debug\Solidworks_PDM_Specification.SolidWorksPDMForm.resources
