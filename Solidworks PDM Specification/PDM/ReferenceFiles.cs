@@ -59,6 +59,7 @@ namespace Solidworks_PDM_Specification
                         @ref = (IEdmReference10) Reference.GetNextChild(pos);
                         File = vault.GetFileFromPath(@ref.FoundPath, out ParentFolder);
                         Elements.Add(GetElementFromVault(File, @ref.RefConfiguration));
+                        Elements[Elements.Count - 1].Count = @ref.RefCount;
                     }
                 }
             }

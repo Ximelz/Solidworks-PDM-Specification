@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Settings ExcelTemplate="D:\aSpecification.xltx">
+<Settings ExcelTemplate="F:\C#\!SolidWorks API\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\bin\Debug\Specification.xltx">
   <Vault>PDM</Vault>
   <ComparsionGlobalVariable>
     <KeyVaultPair Key="Name" Value="Наименование" />
@@ -12,11 +12,11 @@
     <KeyVaultPair Key="Checker" Value="п_Пров" />
     <KeyVaultPair Key="NormativeControl" Value="п_Н_контр" />
     <KeyVaultPair Key="Approver" Value="п_Утв" />
-    <KeyVaultPair Key="Litera" Value="Лит" />
-    <KeyVaultPair Key="InvNumbOrigin" Value="а_Инв_№_подл" />
-    <KeyVaultPair Key="ReplacedInvNumb" Value="а_Взам_Инв_№" />
-    <KeyVaultPair Key="InvNumbDupl" Value="а_Инв_№_дубл" />
-    <KeyVaultPair Key="ReferenceNumb" Value="а_Справ_№" />
-    <KeyVaultPair Key="PrimaryApplication" Value="Перв_Примен" />
+    <KeyVaultPair Key="Litera" Value="" />
+    <KeyVaultPair Key="InvNumbOrigin" Value="" />
+    <KeyVaultPair Key="ReplacedInvNumb" Value="" />
+    <KeyVaultPair Key="InvNumbDupl" Value="" />
+    <KeyVaultPair Key="ReferenceNumb" Value="" />
+    <KeyVaultPair Key="PrimaryApplication" Value="" />
   </ComparsionGlobalVariable>
 </Settings>

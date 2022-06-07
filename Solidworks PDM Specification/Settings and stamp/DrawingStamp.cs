@@ -50,7 +50,7 @@ namespace Solidworks_PDM_Specification
         {
             set
             {
-                if (DateDeveloper == null)
+                if (value != "" && DateDeveloper.ToString("dd.MM.yyyy") == "01.01.0001")
                     DateDeveloper = DateTime.Now;
                 developer = value;
             }
@@ -64,7 +64,7 @@ namespace Solidworks_PDM_Specification
         {
             set
             {
-                if (DateChecker == null)
+                if (value != "" && DateChecker.ToString("dd.MM.yyyy") == "01.01.0001")
                     DateChecker = DateTime.Now;
                 checker = value;
             }
@@ -78,7 +78,7 @@ namespace Solidworks_PDM_Specification
         {
             set
             {
-                if (DateNormativeControl == null)
+                if (value != "" && DateNormativeControl.ToString("dd.MM.yyyy") == "01.01.0001")
                     DateNormativeControl = DateTime.Now;
                 normativeControl = value;
             }
@@ -92,7 +92,7 @@ namespace Solidworks_PDM_Specification
         {
             set
             {
-                if (DateApprover == null)
+                if (value != "" && DateApprover.ToString("dd.MM.yyyy") == "01.01.0001")
                     DateApprover = DateTime.Now;
                 approver = value;
             }
