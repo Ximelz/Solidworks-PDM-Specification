@@ -71,6 +71,7 @@
     <Compile Include="PDM\SolidWorksPDMForm.Designer.cs">
       <DependentUpon>SolidWorksPDMForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Settings and stamp\SettingValues.cs" />
     <Compile Include="SpecificationCreateForm.cs">
       <SubType>Form</SubType>
     </Compile>

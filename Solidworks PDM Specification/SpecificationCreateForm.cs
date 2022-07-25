@@ -15,7 +15,6 @@ namespace Solidworks_PDM_Specification
         private DrawingStamp stamp;
         private XML_Convert xml;
         public List<Element> Elements;
-        private Element SelectElement;
         private string currentDirectory;
         private Dictionary<string, int> idSection = new Dictionary<string, int>()
         {
@@ -30,7 +29,6 @@ namespace Solidworks_PDM_Specification
         {
             InitializeComponent();
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
             currentDirectory = Directory.GetCurrentDirectory();
@@ -38,38 +36,7 @@ namespace Solidworks_PDM_Specification
             stamp = new DrawingStamp();
             xml = new XML_Convert();
             Elements = new List<Element>();
-
-            if (!File.Exists(currentDirectory + "\\PathWithSettings.xml"))
-            {
-                xml.Export(currentDirectory + "\\Settings.xml");
-                if (!File.Exists(currentDirectory + "\\Settings.xml"))
-                {
-                    settings.excelTemplate = currentDirectory + "\\Specification.xltx";
-                    xml.Export(settings, currentDirectory + "\\Settings.xml");
-                    return;
-                }
-                if (!File.Exists(settings.excelTemplate))
-                {
-                    settings.excelTemplate = currentDirectory + "\\Specification.xltx";
-                    xml.Export(settings, currentDirectory + "\\Settings.xml");
-                }
-                return;
-            }
-            xml.Import(out string path);
-            if (File.Exists(path))
-                xml.Import(out settings, path);
-            else
-            {
-                xml.Export(settings, currentDirectory + "\\Settings.xml");
-                xml.Export(currentDirectory + "\\Settings.xml");
-            }
-            if (!File.Exists(settings.excelTemplate))
-            {
-                settings.excelTemplate = currentDirectory + "\\Specification.xltx";
-                xml.Export(settings, currentDirectory + "\\Settings.xml");
-            }
         }
-
         private void SettingsButton_Click(object sender, EventArgs e)
         {
             SettingsForm form = new SettingsForm(settings);
@@ -84,8 +51,6 @@ namespace Solidworks_PDM_Specification
             stamp = form.stemp;
             form.Dispose();
         }
-
-
         private void CreateSpecification_Click(object sender, EventArgs e)
         {
             (IEdmVault5, bool) vault;
@@ -105,7 +70,6 @@ namespace Solidworks_PDM_Specification
             GetReferenceFiles(vault.Item1);
             UpdateSpecificationButton.Enabled = true;
         }
-
         private void UpdateSpecificationButton_Click(object sender, EventArgs e)
         {
             (IEdmVault5, bool) vault;
@@ -117,7 +81,6 @@ namespace Solidworks_PDM_Specification
             }
             GetReferenceFiles(vault.Item1);
         }
-
         private void GetReferenceFiles(IEdmVault5 vault)
         {
             ReferenceFiles refFiles = new ReferenceFiles(stamp.FilePath, settings, stamp, vault);
@@ -125,7 +88,6 @@ namespace Solidworks_PDM_Specification
             stamp = refFiles.stamp;
             UpdateDataGrid(Elements);
         }
-
         private (IEdmVault5, bool) LogginInVault()
         {
             try
@@ -147,6 +109,32 @@ namespace Solidworks_PDM_Specification
                 return (null, false);
             }
         }
+        private void OpenFileButton_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.Filter = "Xml files(*.xml)|*.xml|All files(*.*)|*.*";
+            XML_Convert xml = new XML_Convert();
+            DialogResult DialogOpenResult;
+            DialogOpenResult = openFileDialog1.ShowDialog();
+            if (!(DialogOpenResult == DialogResult.OK))
+                return;
+            xml.Import(out Elements, out stamp, openFileDialog1.FileName);
+            if (stamp.usePdmFlag)
+                UpdateSpecificationButton.Enabled = true;
+            else
+                UpdateSpecificationButton.Enabled = false;
+            UpdateDataGrid(Elements);
+        }
+        private void SaveFileButton_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.Filter = "Xml files(*.xml)|*.xml|All files(*.*)|*.*";
+            XML_Convert xml = new XML_Convert();
+            DialogResult DialogSaveResult;
+            DialogSaveResult = saveFileDialog1.ShowDialog();
+            if (!(DialogSaveResult == DialogResult.OK))
+                return;
+            xml.Export(GetNewListElements(), stamp, saveFileDialog1.FileName);
+        }
+
 
         private void UpdateDataGrid(List<Element> elements)
         {
@@ -185,47 +173,16 @@ namespace Solidworks_PDM_Specification
                 i++;
             }
         }
-
         private void AddNewRow(Element element)
         {
             dataGridView1.Rows[dataGridView1.Rows.Count - 2].SetValues(element.DrawingPaperSize, element.Zone,
                                     element.Designation, element.Name, element.Count.ToString(), element.Note, element.nameFlag); ;
             dataGridView1.Rows.AddCopy(dataGridView1.Rows.Count - 2);
         }
-
-
-        private void OpenFileButton_Click(object sender, EventArgs e)
-        {
-            openFileDialog1.Filter = "Xml files(*.xml)|*.xml|All files(*.*)|*.*";
-            XML_Convert xml = new XML_Convert();
-            DialogResult DialogOpenResult;
-            DialogOpenResult = openFileDialog1.ShowDialog();
-            if (!(DialogOpenResult == DialogResult.OK))
-                return;
-            xml.Import(out Elements, out stamp, openFileDialog1.FileName);
-            if (stamp.usePdmFlag)
-                UpdateSpecificationButton.Enabled = true;
-            else
-                UpdateSpecificationButton.Enabled = false;
-            UpdateDataGrid(Elements);
-        }
-
-        private void SaveFileButton_Click(object sender, EventArgs e)
-        {
-            saveFileDialog1.Filter = "Xml files(*.xml)|*.xml|All files(*.*)|*.*";
-            XML_Convert xml = new XML_Convert();
-            DialogResult DialogSaveResult;
-            DialogSaveResult = saveFileDialog1.ShowDialog();
-            if (!(DialogSaveResult == DialogResult.OK))
-                return;
-            xml.Export(GetNewListElements(), stamp, saveFileDialog1.FileName);
-        }
-
         private void exportToExcelButton_Click(object sender, EventArgs e)
         {
             exportToExcel(GetNewListElements());
         }
-
         private List<Element> GetNewListElements()
         {
             List<Element> elements = new List<Element>();
@@ -277,6 +234,8 @@ namespace Solidworks_PDM_Specification
             Elements[currentIndex].nameFlag = (bool)dataGridView1.Rows[i].Cells[6].Value;
             Elements[currentIndex].Section = section;
         }
+
+
 
         private void exportToExcel(List<Element> elements)
         {
@@ -362,7 +321,6 @@ namespace Solidworks_PDM_Specification
                 }
             }
         }
-
         private void AddElementsOnSpecificationForm(ref Worksheet worksheet, ref int cellIndex, ref int maxIndex, ref int listCount, ref int position, List<Element> elements, ref int Lists, Workbook workbook)
         {
             Cell cell;
@@ -418,7 +376,6 @@ namespace Solidworks_PDM_Specification
                 cellIndex += 2;
             }
         }
-
         private void SplitDesignation(Worksheet worksheet, ref int cellIndex, string designation, Cell cell, bool nameFlag)
         {
             string[] designationSplit = designation.Split();
@@ -476,7 +433,6 @@ namespace Solidworks_PDM_Specification
                 }
             }
         }
-
         private void SetStamp(Worksheet worksheet, int Lists)
         {
             Cell cell;
@@ -539,7 +495,6 @@ namespace Solidworks_PDM_Specification
                 cell.PutValue(Lists);
             }
         }
-
         private void AddButton_Click(object sender, EventArgs e)
         {
             int index = dataGridView1.CurrentRow.Index;
@@ -562,7 +517,6 @@ namespace Solidworks_PDM_Specification
             if (idSection["Комплекты"] > index)
                 idSection["Комплекты"]++;
         }
-
         private List<Element> SortList(List<Element> elements, string section)
         {
             List<Element> resultElements = new List<Element>();
@@ -593,7 +547,6 @@ namespace Solidworks_PDM_Specification
             }
             return resultElements;
         }
-
         private List<Element> AddElementInMidOfList(List<Element> resultElements, Element element, int currentIndex, int resultElementsCount)
         {
             List<Element> tempElements = new List<Element>();
@@ -619,6 +572,5 @@ namespace Solidworks_PDM_Specification
             else
                 return true;
         }
-
     }
 }

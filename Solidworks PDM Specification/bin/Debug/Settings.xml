@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Settings ExcelTemplate="D:\Projects C\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\bin\Debug\Specification.xltx">
   <Vault>PDM</Vault>
-  <StandartSettings>D:\Projects C\SolidWorks Specification GOST v1.0\Solidworks PDM Specification\Solidworks PDM Specification\bin\Debug\SettingsStandart.xml</StandartSettings>
   <ComparsionGlobalVariable>
     <KeyVaultPair Key="Name" Value="Наименование" />
     <KeyVaultPair Key="Designation" Value="Обозначение" />

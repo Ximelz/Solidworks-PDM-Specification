@@ -17,10 +17,10 @@ namespace Solidworks_PDM_Specification
     {
         #region Import
         
-        public void Import(out Settings settings, string path)
+        public void Import(out SettingValues settings, string path)
         {
             string xml = File.ReadAllText(path);
-            settings = new Settings("");
+            settings = new SettingValues();
 
             List<XElement> ElementsInXML = XDocument.Parse(xml).Element("Settings").Element("ComparsionGlobalVariable").Descendants("KeyVaultPair").ToList();
             (string, string) tuple = ("","");
@@ -31,7 +31,7 @@ namespace Solidworks_PDM_Specification
             }
 
             settings.Vault = XDocument.Parse(xml).Element("Settings").Element("Vault").Value;
-            settings.standartSettingsPath = XDocument.Parse(xml).Element("Settings").Element("StandartSettings").Value;
+            //settings.standartSettingsPath = XDocument.Parse(xml).Element("Settings").Element("StandartSettings").Value;
             string excelTemplateValue = XDocument.Parse(xml).Element("Settings").Attribute("ExcelTemplate").Value;
             if (File.Exists(excelTemplateValue))
                 settings.excelTemplate = excelTemplateValue;
@@ -82,6 +82,7 @@ namespace Solidworks_PDM_Specification
 
             return element;
         }
+
         private DrawingStamp Import_Stamp(XElement item)
         {
             DrawingStamp stamp = new DrawingStamp();
@@ -118,10 +119,10 @@ namespace Solidworks_PDM_Specification
 
         #region Export
 
-        public void Export(Settings settings, string path)
+        public void Export(SettingValues settings, string path)
         {
             XElement xmlParse = new XElement("Settings");
-            XElement xmlParseStandartSettings = new XElement("StandartSettings");
+            //XElement xmlParseStandartSettings = new XElement("StandartSettings");
             XElement xmlParseVault = new XElement("Vault");
             XElement xmlParseDictionary = new XElement("ComparsionGlobalVariable");
             XAttribute xAttributeExcelTemplate;
@@ -130,12 +131,12 @@ namespace Solidworks_PDM_Specification
             else
                 xAttributeExcelTemplate = new XAttribute("ExcelTemplate", Directory.GetCurrentDirectory() + "\\ExelTemplate.xltx");
             xmlParseVault.Add(settings.Vault);
-            xmlParseStandartSettings.Add(settings.standartSettingsPath);
+            //xmlParseStandartSettings.Add(settings.standartSettingsPath);
 
             foreach (KeyValuePair<string, string> keyValuePair in settings.ComparsionGlobalVariable)
                 xmlParseDictionary.Add(Export_Dictionary(keyValuePair.Key, keyValuePair.Value));
             xmlParse.Add(xmlParseVault);
-            xmlParse.Add(xmlParseStandartSettings);
+            //xmlParse.Add(xmlParseStandartSettings);
             xmlParse.Add(xAttributeExcelTemplate);
             xmlParse.Add(xmlParseDictionary);
             xmlParse.Save(path);

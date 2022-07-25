@@ -17,11 +17,10 @@ namespace Solidworks_PDM_Specification
         public SolidWorksPDMForm(IEdmVault5 vault)
         {
             InitializeComponent();
-            this.vault = vault;
+            this.vault = (IEdmVault7)vault;
         }
         
-        private string viewVault;
-        private IEdmVault5 vault;
+        private IEdmVault7 vault;
         public string path;
         public bool closeFlag = true;
         public string configuration;
@@ -74,12 +73,11 @@ namespace Solidworks_PDM_Specification
         private void GetConfigurationsFile()
         {
             IEdmFile17 file;
-            IEdmVault7 vault2 = (IEdmVault7) vault;
             IEdmFolder5 ppoRetParentFolder;
             EdmStrLst5 cfgList = default(EdmStrLst5);
             IEdmPos5 pos = default(IEdmPos5);
             string cfgName = null;
-            file = (IEdmFile17)vault2.GetFileFromPath(OpenFilePathTextBox.Text, out ppoRetParentFolder);
+            file = (IEdmFile17)vault.GetFileFromPath(OpenFilePathTextBox.Text, out ppoRetParentFolder);
             cfgList = file.GetConfigurations();
             pos = cfgList.GetHeadPosition();
             while (!pos.IsNull)

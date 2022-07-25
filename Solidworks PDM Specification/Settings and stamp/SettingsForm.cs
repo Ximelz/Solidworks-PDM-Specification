@@ -11,24 +11,16 @@ namespace Solidworks_PDM_Specification
         //private bool changeSettings;
         public Settings settings;
         private IEdmVault5 vault;
-        private XML_Convert xml;
         private bool saveResult = true;
         private bool pdmIsNotLogged = false;
 
         public SettingsForm(Settings settings)
         {
             InitializeComponent();
-
-            xml = new XML_Convert();
-            xml.Import(out string pathSettings);
-            SettingsPathTextBox.Text = pathSettings;
-
             this.settings = settings;
-
-            xml.Import(out settings, pathSettings);
-            LoadComboBoxesFromSettings();
-
+            SettingsPathTextBox.Text = settings.currentPath;
             excelTemplateTextBox.Text = settings.excelTemplate;
+            LoadComboBoxesFromSettings();
         }
 
         private void SettingsForm_Load(object sender, EventArgs e)
@@ -92,10 +84,7 @@ namespace Solidworks_PDM_Specification
 
             settings.ComparsionGlobalVariable = tempDictionary;
             settings.Vault = VaultsComboBox.Text;
-
-            xml = new XML_Convert();
-            xml.Export(settings, SettingsPathTextBox.Text);
-            xml.Export(SettingsPathTextBox.Text);
+            settings.SaveSettings(SettingsPathTextBox.Text);
         }
 
         private bool GetViewVaults()
@@ -138,10 +127,10 @@ namespace Solidworks_PDM_Specification
             return false;
         }
 
-        private void VaultsComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            LoadComboBoxesFromSettings();
-        }
+        //private void VaultsComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    LoadComboBoxesFromSettings();
+        //}
 
         private void LoadComboBoxesFromSettings()
         {

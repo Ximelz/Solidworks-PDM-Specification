@@ -374,6 +374,6 @@
         private System.Windows.Forms.TextBox DeveloperTextBox;
         private System.Windows.Forms.TextBox DesignationTextBox;
         private System.Windows.Forms.Button OKButton;
-        private System.Windows.Forms.Button CancelButton;
+        private new System.Windows.Forms.Button CancelButton;
     }
 }

@@ -85,7 +85,7 @@
             this.VaultsComboBox.Name = "VaultsComboBox";
             this.VaultsComboBox.Size = new System.Drawing.Size(141, 21);
             this.VaultsComboBox.TabIndex = 0;
-            this.VaultsComboBox.SelectedIndexChanged += new System.EventHandler(this.VaultsComboBox_SelectedIndexChanged);
+            //this.VaultsComboBox.SelectedIndexChanged += new System.EventHandler(this.VaultsComboBox_SelectedIndexChanged);
             // 
             // CancelButton
             // 
@@ -548,7 +548,7 @@
         #endregion
 
         private System.Windows.Forms.ComboBox VaultsComboBox;
-        private System.Windows.Forms.Button CancelButton;
+        private new System.Windows.Forms.Button CancelButton;
         private System.Windows.Forms.Button SaveButton;
         private System.Windows.Forms.TextBox SettingsPathTextBox;
         private System.Windows.Forms.Button SettingsButtonBrowserPath;

@@ -85,8 +85,6 @@ namespace Solidworks_PDM_Specification
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Name"], stamp.Configuration, out currentVar);
             if (currentVar != null)
                 stamp.Name = currentVar.ToString().Trim();
-
-            #region GetVar
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["Designation"], stamp.Configuration, out currentVar);
             if (currentVar != null)
                 stamp.Designation = currentVar.ToString().Trim();
@@ -151,8 +149,6 @@ namespace Solidworks_PDM_Specification
             EnumVarObj.GetVar(settings.ComparsionGlobalVariable["PrimaryApplication"], stamp.Configuration, out currentVar);
             if (currentVar != null)
                 stamp.PrimaryApplication = currentVar.ToString().Trim();
-            #endregion
-
             EnumVarObj.CloseFile(false);
         }
 
