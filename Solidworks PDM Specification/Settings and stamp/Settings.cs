@@ -12,13 +12,15 @@ namespace Solidworks_PDM_Specification
         {
             ComparsionGlobalVariable = new Dictionary<string, string>();
             Vault = "";
-            //excelTemplate = currentPath + "\\Specification.xltx";
+            standartSettingsPath = currentPath + "\\SettingsStandart.xml";
+            excelTemplate = currentPath + "\\Specification.xltx";
             InitialDictionary();
         }
 
         public string Vault { get; set; }                                   //Переменная хранящая исходное хранилище
         public Dictionary<string, string> ComparsionGlobalVariable;         //Сопоставление переменных из программы глобальных переменным SolidWorks PDM
         public string excelTemplate { set; get; }
+        public string standartSettingsPath { set; get; }
 
         private void InitialDictionary()
         {
@@ -38,6 +40,18 @@ namespace Solidworks_PDM_Specification
             ComparsionGlobalVariable.Add("InvNumbDupl", "");
             ComparsionGlobalVariable.Add("ReferenceNumb", "");
             ComparsionGlobalVariable.Add("PrimaryApplication", "");
+        }
+
+        public void ResetSetings()
+        {
+            ComparsionGlobalVariable = new Dictionary<string, string>();
+            XML_Convert xml = new XML_Convert();
+            Settings settings;
+            xml.Import(out settings, standartSettingsPath);
+            this.Vault = settings.Vault;
+            if (File.Exists(settings.excelTemplate))
+                this.excelTemplate = settings.excelTemplate;
+            this.ComparsionGlobalVariable = settings.ComparsionGlobalVariable;
         }
     }
 }

@@ -58,7 +58,10 @@ namespace Solidworks_PDM_Specification
                     {
                         @ref = (IEdmReference10) Reference.GetNextChild(pos);
                         File = vault.GetFileFromPath(@ref.FoundPath, out ParentFolder);
-                        Elements.Add(GetElementFromVault(File, @ref.RefConfiguration));
+                        string[] splitFileName = @ref.FoundPath.Split('\\');
+
+                        Elements.Add(GetElementFromVault(File, @ref.RefConfiguration, 
+                            splitFileName[splitFileName.Length - 1])); //splitFileName[splitFileName.Length - 1].Substring(0, splitFileName[splitFileName.Length - 1].Length - 7)))
                         Elements[Elements.Count - 1].Count = @ref.RefCount;
                     }
                 }
@@ -153,7 +156,7 @@ namespace Solidworks_PDM_Specification
             EnumVarObj.CloseFile(false);
         }
 
-        private Element GetElementFromVault(IEdmFile5 File, string Configuration)
+        private Element GetElementFromVault(IEdmFile5 File, string Configuration, string fileName)
         {
             Element element = new Element();
             IEdmEnumeratorVariable8 EnumVarObj = default(IEdmEnumeratorVariable8);
@@ -181,7 +184,10 @@ namespace Solidworks_PDM_Specification
             #endregion
             EnumVarObj.CloseFile(false);
             if (element.Name.Trim() == "" & element.Designation.Trim() == "")
-                element.Name = "Имя отсутствует";
+            {
+                element.Name = fileName;
+                element.nameFlag = true;
+            }
             if (element.Section.Trim() == "")
                 element.Section = "Прочие изделия";
             return element;

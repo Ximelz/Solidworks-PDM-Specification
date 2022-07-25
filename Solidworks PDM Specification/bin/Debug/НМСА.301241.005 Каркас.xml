@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SpecificationFile UsePdmFlag="True">
+  <Stamp Developer="Терехов" Checker="" NormativeControl="" Approver="Шубников" Litera="" InvNumbOrigin="" ReplacedInvNumb="" InvNumbDupl="" ReferenceNumb="" PrimaryApplication="" FilePath="C:\PDM\Проект Пользователи\Терехов АВ\301241005\НМСА.301241.005 Каркас.SLDASM" DateDeveloper="0001-01-01T00:00:00" DateChecker="0001-01-01T00:00:00" DateNormativeControl="0001-01-01T00:00:00" DateApprover="0001-01-01T00:00:00" Configuration="По умолчанию">
+    <Element Name="Каркас" Designation="НМСА.301241.005" DrawingPaperSize="" Section="Сборочные единицы" Note="" Zone="" Count="0" />
+  </Stamp>
+  <Elements>
+    <Element Name="Швеллер" Designation="НМСА.745322.051-01" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="4" />
+    <Element Name="Швеллер" Designation="НМСА.745322.051-02" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="4" />
+    <Element Name="Швеллер" Designation="НМСА.745322.051-03" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="2" />
+    <Element Name="Швеллер" Designation="НМСА.745322.051-04" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="4" />
+    <Element Name="Швеллер" Designation="НМСА.745322.051-05" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="1" />
+    <Element Name="Швеллер" Designation="НМСА.745322.051-06" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="12" />
+    <Element Name="Швеллер" Designation="НМСА.745322.051-07" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="2" />
+    <Element Name="Швеллер" Designation="НМСА.745322.051-08" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="2" />
+    <Element Name="Швеллер" Designation="НМСА.745322.051-09" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="2" />
+    <Element Name="Швеллер" Designation="НМСА.745322.051-10" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="4" />
+    <Element Name="Швеллер" Designation="НМСА.745322.051-11" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="2" />
+    <Element Name="Лист" Designation="НМСА.741354.025-02" DrawingPaperSize="" Section="Детали" Note="СВ" Zone="" Count="1" />
+    <Element Name="Лист" Designation="НМСА.741354.025" DrawingPaperSize="" Section="Детали" Note="СВ" Zone="" Count="8" />
+    <Element Name="Лист" Designation="НМСА.741354.027-01" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="10" />
+    <Element Name="Лист" Designation="НМСА.741354.027" DrawingPaperSize="" Section="Детали" Note="СВ" Zone="" Count="1" />
+    <Element Name="" Designation="НМСА.741354.0320-02" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="8" />
+    <Element Name="Лист" Designation="НМСА.741354.032" DrawingPaperSize="" Section="Детали" Note="СВ" Zone="" Count="4" />
+    <Element Name="Лист" Designation="НМСА.741124.598-01" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="4" />
+    <Element Name="Лист" Designation="НМСА.741124.598" DrawingPaperSize="" Section="Детали" Note="СВ" Zone="" Count="4" />
+    <Element Name="Труба" Designation="НМСА.746121.062-01" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="2" />
+    <Element Name="Труба" Designation="НМСА.746121.062-02" DrawingPaperSize="" Section="Детали" Note="СВ" Zone="" Count="2" />
+    <Element Name="" Designation="НМСА.746121.062" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="3" />
+    <Element Name="Лист" Designation="НМСА.741124.610-01" DrawingPaperSize="" Section="Детали" Note="" Zone="" Count="4" />
+    <Element Name="Лист" Designation="НМСА.741124.610" DrawingPaperSize="" Section="Детали" Note="СВ" Zone="" Count="4" />
+    <Element Name="фывфыв" Designation="" DrawingPaperSize="" Section="Сборочные единицы" Note="" Zone="" Count="12" />
+  </Elements>
+</SpecificationFile>

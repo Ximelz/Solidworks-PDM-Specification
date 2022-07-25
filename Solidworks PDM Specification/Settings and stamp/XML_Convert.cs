@@ -31,6 +31,7 @@ namespace Solidworks_PDM_Specification
             }
 
             settings.Vault = XDocument.Parse(xml).Element("Settings").Element("Vault").Value;
+            settings.standartSettingsPath = XDocument.Parse(xml).Element("Settings").Element("StandartSettings").Value;
             string excelTemplateValue = XDocument.Parse(xml).Element("Settings").Attribute("ExcelTemplate").Value;
             if (File.Exists(excelTemplateValue))
                 settings.excelTemplate = excelTemplateValue;
@@ -77,6 +78,7 @@ namespace Solidworks_PDM_Specification
             element.Note = item.Attribute("Note").Value;
             element.Zone = item.Attribute("Zone").Value;
             element.Count = Convert.ToInt32(item.Attribute("Count").Value);
+            element.nameFlag = Convert.ToBoolean(item.Attribute("NameFlag").Value);
 
             return element;
         }
@@ -119,6 +121,7 @@ namespace Solidworks_PDM_Specification
         public void Export(Settings settings, string path)
         {
             XElement xmlParse = new XElement("Settings");
+            XElement xmlParseStandartSettings = new XElement("StandartSettings");
             XElement xmlParseVault = new XElement("Vault");
             XElement xmlParseDictionary = new XElement("ComparsionGlobalVariable");
             XAttribute xAttributeExcelTemplate;
@@ -127,12 +130,14 @@ namespace Solidworks_PDM_Specification
             else
                 xAttributeExcelTemplate = new XAttribute("ExcelTemplate", Directory.GetCurrentDirectory() + "\\ExelTemplate.xltx");
             xmlParseVault.Add(settings.Vault);
+            xmlParseStandartSettings.Add(settings.standartSettingsPath);
 
             foreach (KeyValuePair<string, string> keyValuePair in settings.ComparsionGlobalVariable)
                 xmlParseDictionary.Add(Export_Dictionary(keyValuePair.Key, keyValuePair.Value));
             xmlParse.Add(xmlParseVault);
-            xmlParse.Add(xmlParseDictionary);
+            xmlParse.Add(xmlParseStandartSettings);
             xmlParse.Add(xAttributeExcelTemplate);
+            xmlParse.Add(xmlParseDictionary);
             xmlParse.Save(path);
         }
 
@@ -182,6 +187,7 @@ namespace Solidworks_PDM_Specification
             XAttribute xAttributeNote = new XAttribute("Note", element.Note);
             XAttribute xAttributeZone = new XAttribute("Zone", element.Zone);
             XAttribute xAttributeCount = new XAttribute("Count", element.Count.ToString());
+            XAttribute xAttributeNameFlag = new XAttribute("NameFlag", element.nameFlag.ToString());
 
             parseElement.Add(xAttributeName);
             parseElement.Add(xAttributeDesignation);
@@ -190,6 +196,7 @@ namespace Solidworks_PDM_Specification
             parseElement.Add(xAttributeNote);
             parseElement.Add(xAttributeZone);
             parseElement.Add(xAttributeCount);
+            parseElement.Add(xAttributeNameFlag);
 
             return parseElement;
         }

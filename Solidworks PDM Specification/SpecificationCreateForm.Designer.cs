@@ -38,19 +38,20 @@
             this.StampButton = new System.Windows.Forms.Button();
             this.exportToExcelButton = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.AddButton = new System.Windows.Forms.Button();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.AddButton = new System.Windows.Forms.Button();
+            this.Column3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // SettingsButton
             // 
-            this.SettingsButton.Location = new System.Drawing.Point(964, 12);
+            this.SettingsButton.Location = new System.Drawing.Point(1053, 12);
             this.SettingsButton.Name = "SettingsButton";
             this.SettingsButton.Size = new System.Drawing.Size(192, 23);
             this.SettingsButton.TabIndex = 0;
@@ -60,7 +61,7 @@
             // 
             // SaveFileButton
             // 
-            this.SaveFileButton.Location = new System.Drawing.Point(964, 173);
+            this.SaveFileButton.Location = new System.Drawing.Point(1053, 173);
             this.SaveFileButton.Name = "SaveFileButton";
             this.SaveFileButton.Size = new System.Drawing.Size(192, 23);
             this.SaveFileButton.TabIndex = 2;
@@ -71,7 +72,7 @@
             // OpenFileButton
             // 
             this.OpenFileButton.Cursor = System.Windows.Forms.Cursors.Default;
-            this.OpenFileButton.Location = new System.Drawing.Point(964, 144);
+            this.OpenFileButton.Location = new System.Drawing.Point(1053, 144);
             this.OpenFileButton.Name = "OpenFileButton";
             this.OpenFileButton.Size = new System.Drawing.Size(192, 23);
             this.OpenFileButton.TabIndex = 3;
@@ -85,7 +86,7 @@
             // 
             // CreateSpecification
             // 
-            this.CreateSpecification.Location = new System.Drawing.Point(964, 70);
+            this.CreateSpecification.Location = new System.Drawing.Point(1053, 70);
             this.CreateSpecification.Name = "CreateSpecification";
             this.CreateSpecification.Size = new System.Drawing.Size(192, 23);
             this.CreateSpecification.TabIndex = 4;
@@ -96,7 +97,7 @@
             // UpdateSpecificationButton
             // 
             this.UpdateSpecificationButton.Enabled = false;
-            this.UpdateSpecificationButton.Location = new System.Drawing.Point(964, 99);
+            this.UpdateSpecificationButton.Location = new System.Drawing.Point(1053, 99);
             this.UpdateSpecificationButton.Name = "UpdateSpecificationButton";
             this.UpdateSpecificationButton.Size = new System.Drawing.Size(192, 23);
             this.UpdateSpecificationButton.TabIndex = 5;
@@ -106,7 +107,7 @@
             // 
             // StampButton
             // 
-            this.StampButton.Location = new System.Drawing.Point(964, 41);
+            this.StampButton.Location = new System.Drawing.Point(1053, 41);
             this.StampButton.Name = "StampButton";
             this.StampButton.Size = new System.Drawing.Size(192, 23);
             this.StampButton.TabIndex = 10;
@@ -116,7 +117,7 @@
             // 
             // exportToExcelButton
             // 
-            this.exportToExcelButton.Location = new System.Drawing.Point(964, 243);
+            this.exportToExcelButton.Location = new System.Drawing.Point(1053, 243);
             this.exportToExcelButton.Name = "exportToExcelButton";
             this.exportToExcelButton.Size = new System.Drawing.Size(192, 23);
             this.exportToExcelButton.TabIndex = 39;
@@ -136,11 +137,22 @@
             this.Column4,
             this.Column5,
             this.Column6,
-            this.Column7});
-            this.dataGridView1.Location = new System.Drawing.Point(12, 46);
+            this.Column7,
+            this.Column3});
+            this.dataGridView1.Location = new System.Drawing.Point(10, 46);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(946, 555);
+            this.dataGridView1.Size = new System.Drawing.Size(1035, 555);
             this.dataGridView1.TabIndex = 49;
+            // 
+            // AddButton
+            // 
+            this.AddButton.Location = new System.Drawing.Point(12, 12);
+            this.AddButton.Name = "AddButton";
+            this.AddButton.Size = new System.Drawing.Size(142, 23);
+            this.AddButton.TabIndex = 50;
+            this.AddButton.Text = "Добавить элемент";
+            this.AddButton.UseVisualStyleBackColor = true;
+            this.AddButton.Click += new System.EventHandler(this.AddButton_Click);
             // 
             // Column1
             // 
@@ -177,21 +189,16 @@
             this.Column7.HeaderText = "Примечание";
             this.Column7.Name = "Column7";
             // 
-            // AddButton
+            // Column3
             // 
-            this.AddButton.Location = new System.Drawing.Point(12, 12);
-            this.AddButton.Name = "AddButton";
-            this.AddButton.Size = new System.Drawing.Size(142, 23);
-            this.AddButton.TabIndex = 50;
-            this.AddButton.Text = "Добавить элемент";
-            this.AddButton.UseVisualStyleBackColor = true;
-            this.AddButton.Click += new System.EventHandler(this.AddButton_Click);
+            this.Column3.HeaderText = "Отсутствующее имя в карте данных";
+            this.Column3.Name = "Column3";
             // 
             // SpecificationCreateForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1168, 613);
+            this.ClientSize = new System.Drawing.Size(1257, 613);
             this.Controls.Add(this.AddButton);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.exportToExcelButton);
@@ -224,13 +231,14 @@
         private System.Windows.Forms.Button StampButton;
         private System.Windows.Forms.Button exportToExcelButton;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Button AddButton;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column4;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column5;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column6;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column7;
-        private System.Windows.Forms.Button AddButton;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Column3;
     }
 }
 

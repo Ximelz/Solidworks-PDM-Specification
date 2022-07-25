@@ -205,5 +205,10 @@ namespace Solidworks_PDM_Specification
             settings.excelTemplate = excelTemplateTextBox.Text;
 
         }
+
+        private void ResetButton_Click(object sender, EventArgs e)
+        {
+            settings.ResetSetings();
+        }
     }
 }

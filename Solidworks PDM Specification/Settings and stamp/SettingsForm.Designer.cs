@@ -74,6 +74,7 @@
             this.excelTemplateTextBox = new System.Windows.Forms.TextBox();
             this.openXltxPath = new System.Windows.Forms.Button();
             this.label21 = new System.Windows.Forms.Label();
+            this.ResetButton = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -503,6 +504,16 @@
             this.label21.TabIndex = 10;
             this.label21.Text = "Место положение шаблона Excel";
             // 
+            // ResetButton
+            // 
+            this.ResetButton.Location = new System.Drawing.Point(12, 461);
+            this.ResetButton.Name = "ResetButton";
+            this.ResetButton.Size = new System.Drawing.Size(75, 23);
+            this.ResetButton.TabIndex = 11;
+            this.ResetButton.Text = "Сброс";
+            this.ResetButton.UseVisualStyleBackColor = true;
+            this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -510,6 +521,7 @@
             this.AutoScroll = true;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnableAllowFocusChange;
             this.ClientSize = new System.Drawing.Size(350, 535);
+            this.Controls.Add(this.ResetButton);
             this.Controls.Add(this.label21);
             this.Controls.Add(this.openXltxPath);
             this.Controls.Add(this.excelTemplateTextBox);
@@ -581,5 +593,6 @@
         private System.Windows.Forms.TextBox excelTemplateTextBox;
         private System.Windows.Forms.Button openXltxPath;
         private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Button ResetButton;
     }
 }

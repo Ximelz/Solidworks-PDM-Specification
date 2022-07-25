@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using System.Windows.Media.Effects;
 
 namespace Solidworks_PDM_Specification
 {
@@ -141,19 +142,15 @@ namespace Solidworks_PDM_Specification
                     vault.LoginAuto(settings.Vault, this.Handle.ToInt32());
                 return (vault, flag);
             }
-            catch (System.Runtime.InteropServices.COMException ex)
+            catch
             {
-                MessageBox.Show("HRESULT = 0x" + ex.ErrorCode.ToString("X") + " " + ex.Message);
+                return (null, false);
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            return (null, false);
         }
 
         private void UpdateDataGrid(List<Element> elements)
         {
+            dataGridView1.Rows.Clear();
             nameSections = new Dictionary<string, List<Element>>()
             {
                 {"Документация", new List<Element>()}, {"Комплексы", new List<Element>()},
@@ -191,8 +188,8 @@ namespace Solidworks_PDM_Specification
 
         private void AddNewRow(Element element)
         {
-            dataGridView1.Rows[dataGridView1.Rows.Count - 2].SetValues(element.DrawingPaperSize, element.Zone, 
-                                    element.Designation, element.Name, element.Count.ToString(), element.Note);
+            dataGridView1.Rows[dataGridView1.Rows.Count - 2].SetValues(element.DrawingPaperSize, element.Zone,
+                                    element.Designation, element.Name, element.Count.ToString(), element.Note, element.nameFlag); ;
             dataGridView1.Rows.AddCopy(dataGridView1.Rows.Count - 2);
         }
 
@@ -226,7 +223,7 @@ namespace Solidworks_PDM_Specification
 
         private void exportToExcelButton_Click(object sender, EventArgs e)
         {
-           exportToExcel(GetNewListElements());
+            exportToExcel(GetNewListElements());
         }
 
         private List<Element> GetNewListElements()
@@ -244,7 +241,7 @@ namespace Solidworks_PDM_Specification
             i = 1;
             int rowsCount = dataGridView1.Rows.Count - 2;
             for (int j = 1; j < rowsCount; j++)
-                if (i < 9)
+                if (i < 8)
                 {
                     if (j < sections[i])
                     {
@@ -266,11 +263,18 @@ namespace Solidworks_PDM_Specification
             Elements[currentIndex].Zone = dataGridView1.Rows[i].Cells[1].Value.ToString();
             Elements[currentIndex].Designation = dataGridView1.Rows[i].Cells[2].Value.ToString();
             Elements[currentIndex].Name = dataGridView1.Rows[i].Cells[3].Value.ToString();
-            if (int.TryParse(dataGridView1.Rows[i].Cells[4].Value.ToString(), out int count))
-                Elements[currentIndex].Count = count;
+            if (dataGridView1.Rows[i].Cells[4].Value != null)
+            {
+                if (int.TryParse(dataGridView1.Rows[i].Cells[4].Value.ToString(), out int count))
+                    Elements[currentIndex].Count = count;
+                else
+                    Elements[currentIndex].Count = 0;
+            }
             else
                 Elements[currentIndex].Count = 0;
+
             Elements[currentIndex].Note = dataGridView1.Rows[i].Cells[5].Value.ToString();
+            Elements[currentIndex].nameFlag = (bool)dataGridView1.Rows[i].Cells[6].Value;
             Elements[currentIndex].Section = section;
         }
 
@@ -284,9 +288,19 @@ namespace Solidworks_PDM_Specification
                 {"Стандартные изделия", new List<Element>()}, {"Прочие изделия", new List<Element>()},
                 {"Материалы", new List<Element>()}, {"Комплекты", new List<Element>()}
             };
-            foreach (Element element in Elements)
+            foreach (Element element in elements)
                 if (nameSections.ContainsKey(element.Section))
                     nameSections[element.Section].Add(element);
+
+            nameSections["Документация"] = SortList(nameSections["Документация"], "Документация");
+            nameSections["Комплексы"] = SortList(nameSections["Комплексы"], "Комплексы");
+            nameSections["Сборочные единицы"] = SortList(nameSections["Сборочные единицы"], "Сборочные единицы");
+            nameSections["Детали"] = SortList(nameSections["Детали"], "Детали");
+            nameSections["Стандартные изделия"] = SortList(nameSections["Стандартные изделия"], "Стандартные изделия");
+            nameSections["Прочие изделия"] = SortList(nameSections["Прочие изделия"], "Прочие изделия");
+            nameSections["Материалы"] = SortList(nameSections["Материалы"], "Материалы");
+            nameSections["Комплекты"] = SortList(nameSections["Комплекты"], "Комплекты");
+
             using (var workbook = new Workbook(settings.excelTemplate))
             {
                 Worksheet ws = workbook.Worksheets["Specification_sheet_1"];
@@ -295,11 +309,23 @@ namespace Solidworks_PDM_Specification
                 int position = 1;
                 int maxCellIndex = 61;
                 int Lists = 1;
+                WorksheetCollection wc;
                 SetStamp(ws, Lists);
                 foreach (KeyValuePair<string, List<Element>> keyValuePair in nameSections)
                 {
                     if (keyValuePair.Value.Count > 0)
                     {
+                        if (cellIndex + 6 > maxCellIndex)
+                        {
+                            wc = workbook.Worksheets;
+                            Lists++;
+                            wc.Add("Specification_sheet_" + (Lists + 1));
+                            maxCellIndex = 67;
+                            wc[wc.Count - 1].Copy(wc[wc.Count - 2]);
+                            ws = workbook.Worksheets["Specification_sheet_" + Lists];
+                            cellIndex = 7;
+                            SetStamp(ws, Lists);
+                        }
                         cellIndex += 2;
                         cell = ws.Cells["AI" + cellIndex];
                         cell.PutValue(keyValuePair.Key);
@@ -310,14 +336,14 @@ namespace Solidworks_PDM_Specification
                         cell.SetStyle(style);
                         cellIndex += 4;
                         int listCount = keyValuePair.Value.Count;
-                        AddElementsOnSpecificationForm(ref ws, ref cellIndex, maxCellIndex, ref listCount, ref position,
+                        AddElementsOnSpecificationForm(ref ws, ref cellIndex,ref maxCellIndex, ref listCount, ref position,
                                                         keyValuePair.Value, ref Lists, workbook);
                     }
                 }
                 ws = workbook.Worksheets["Specification_sheet_1"];
                 cell = ws.Cells["BH67"];
                 cell.PutValue(Lists);
-                WorksheetCollection wc = workbook.Worksheets;
+                wc = workbook.Worksheets;
                 wc.RemoveAt(wc.Count - 1);
                 saveFileDialog1.FileName = stamp.Designation + " " + stamp.Name + ".xls";
                 saveFileDialog1.Filter = "Xls files(*.xls)|*.xls|All files(*.*)|*.*";
@@ -325,18 +351,25 @@ namespace Solidworks_PDM_Specification
                     return;
                 string saveFileName = saveFileDialog1.FileName;
                 string addFileFormat = saveFileName.Substring(saveFileName.Length - 4) == ".xls" ? "" : ".xls";
-                workbook.Save(saveFileName + addFileFormat);
-                Process.Start(saveFileName + addFileFormat);
+                try
+                {
+                    workbook.Save(saveFileName + addFileFormat);
+                    Process.Start(saveFileName + addFileFormat);
+                }
+                catch
+                {
+                    MessageBox.Show("Файл открыт в другой программе");
+                }
             }
         }
 
-        private void AddElementsOnSpecificationForm(ref Worksheet worksheet, ref int cellIndex, int maxIndex, ref int listCount, ref int position, List<Element> elements, ref int Lists, Workbook workbook)
+        private void AddElementsOnSpecificationForm(ref Worksheet worksheet, ref int cellIndex, ref int maxIndex, ref int listCount, ref int position, List<Element> elements, ref int Lists, Workbook workbook)
         {
             Cell cell;
             int i = 0;
             while (listCount > i)
             {
-                if (elements[i].Count / 27 + (elements[i].Count % 27 != 0 ? 1 : 0) > (maxIndex - cellIndex) / 2)
+                if (elements[i].Count / 23 + (elements[i].Count % 23 != 0 ? 1 : 0) > (maxIndex - cellIndex) / 2)
                 {
                     WorksheetCollection wc = workbook.Worksheets;
                     Lists++;
@@ -347,7 +380,6 @@ namespace Solidworks_PDM_Specification
                     cellIndex = 7;
                     SetStamp(worksheet, Lists);
                 }
-
                 cell = worksheet.Cells["E" + cellIndex];
                 cell.PutValue(elements[i].DrawingPaperSize);
 
@@ -367,10 +399,19 @@ namespace Solidworks_PDM_Specification
                 cell.PutValue(elements[i].Note);
 
                 cell = worksheet.Cells["AI" + cellIndex];
-                if (elements[i].Name.Length > 27)
-                    SplitDesignation(worksheet, ref cellIndex, elements[i].Name, cell);
+                if (elements[i].Name.Length > 23)
+                    SplitDesignation(worksheet, ref cellIndex, elements[i].Name, cell, elements[i].nameFlag);
                 else
+                {
                     cell.PutValue(elements[i].Name);
+                    if (elements[i].nameFlag)
+                    {
+                        Style style = cell.GetStyle();
+                        style.Pattern = BackgroundType.Solid;
+                        style.ForegroundColor = System.Drawing.Color.Red;
+                        cell.SetStyle(style);
+                    }
+                }
 
                 position++;
                 i++;
@@ -378,15 +419,62 @@ namespace Solidworks_PDM_Specification
             }
         }
 
-        private void SplitDesignation(Worksheet worksheet, ref int cellIndex, string designation, Cell cell)
+        private void SplitDesignation(Worksheet worksheet, ref int cellIndex, string designation, Cell cell, bool nameFlag)
         {
-            cell.PutValue(designation.Substring(0, 27));
-            cellIndex += 2;
-            cell = worksheet.Cells["AI" + cellIndex];
-            if (designation.Remove(0, 27).Length > 27)
-                SplitDesignation(worksheet, ref cellIndex, designation.Remove(0, 27), cell);
-            else
-                cell.PutValue(designation.Substring(27));
+            string[] designationSplit = designation.Split();
+            int designationSplitLength = designationSplit.Length;
+            designation = designationSplit[0];
+            if (designationSplitLength == 1)
+            {
+                cell.PutValue(designation);
+                if (nameFlag)
+                {
+                    Style style = cell.GetStyle();
+                    style.Pattern = BackgroundType.Solid;
+                    style.ForegroundColor = System.Drawing.Color.Red;
+                    cell.SetStyle(style);
+                }
+                cell = worksheet.Cells["AI" + cellIndex];
+                return;
+            }
+            for (int i = 1; i < designationSplitLength; i++)
+            {
+                if (designationSplit[i].Length + designation.Length + 1 < 23)
+                {
+                    designation += " " + designationSplit[i];
+                    if (i + 1 == designationSplitLength)
+                    {
+                        cell.PutValue(designation);
+                        if (nameFlag)
+                        {
+                            Style style = cell.GetStyle();
+                            style.Pattern = BackgroundType.Solid;
+                            style.ForegroundColor = System.Drawing.Color.Red;
+                            cell.SetStyle(style);
+                        }
+                        cell = worksheet.Cells["AI" + cellIndex];
+                        break;
+                    }
+                }
+                else
+                {
+                    cell.PutValue(designation);
+                    if (nameFlag)
+                    {
+                        Style style = cell.GetStyle();
+                        style.Pattern = BackgroundType.Solid;
+                        style.ForegroundColor = System.Drawing.Color.Red;
+                        cell.SetStyle(style);
+                    }
+                    cellIndex += 2;
+                    cell = worksheet.Cells["AI" + cellIndex];
+                    designation = designationSplit[i];
+                    for (int j = i + 1; j < designationSplitLength; j++)
+                        designation += " " + designationSplit[j];
+                    SplitDesignation(worksheet, ref cellIndex, designation, cell, nameFlag);
+                    break;
+                }
+            }
         }
 
         private void SetStamp(Worksheet worksheet, int Lists)
@@ -403,10 +491,13 @@ namespace Solidworks_PDM_Specification
 
             if (Lists == 1)
             {
+                cell = worksheet.Cells["BC67"];
+                cell.PutValue(1);
+
                 cell = worksheet.Cells["K66"];
                 cell.PutValue(stamp.Developer);
                 cell = worksheet.Cells["W66"];
-                if(stamp.DateDeveloper.ToString("dd.MM.yyyy") != "01.01.0001")
+                if (stamp.DateDeveloper.ToString("dd.MM.yyyy") != "01.01.0001")
                     cell.PutValue(stamp.DateDeveloper.ToString("dd.MM.yyyy"));
 
                 cell = worksheet.Cells["K67"];
@@ -442,7 +533,7 @@ namespace Solidworks_PDM_Specification
             else
             {
                 cell = worksheet.Cells["Z69"];
-                cell.PutValue(stamp.Name);
+                cell.PutValue(stamp.Designation);
 
                 cell = worksheet.Cells["BK70"];
                 cell.PutValue(Lists);
@@ -453,6 +544,81 @@ namespace Solidworks_PDM_Specification
         {
             int index = dataGridView1.CurrentRow.Index;
             dataGridView1.Rows.InsertCopy(index, index + 1);
+            dataGridView1.Rows[index + 1].SetValues("", "", "", "", "", "");
+            if (idSection["Документация"] > index)
+                idSection["Документация"]++;
+            if (idSection["Комплексы"] > index)
+                idSection["Комплексы"]++;
+            if (idSection["Сборочные единицы"] > index)
+                idSection["Сборочные единицы"]++;
+            if (idSection["Детали"] > index)
+                idSection["Детали"]++;
+            if (idSection["Стандартные изделия"] > index)
+                idSection["Стандартные изделия"]++;
+            if (idSection["Прочие изделия"] > index)
+                idSection["Прочие изделия"]++;
+            if (idSection["Материалы"] > index)
+                idSection["Материалы"]++;
+            if (idSection["Комплекты"] > index)
+                idSection["Комплекты"]++;
         }
+
+        private List<Element> SortList(List<Element> elements, string section)
+        {
+            List<Element> resultElements = new List<Element>();
+            int index;
+            if (section == "Детали" || section == "Сборочные единицы")
+                index = 1;
+            else
+                index = 0;
+            foreach (Element element in elements)
+            {
+                int resultElementsCount = resultElements.Count;
+                int currentIndex = 0;
+                bool flag = false;
+                for (int i = 0; i < resultElementsCount; i++)
+                    if (element.DesName[index].Equals(resultElements[i].DesName[index]) || ComparsionStrings(element.DesName[index], resultElements[i].DesName[index]))
+                    {
+                        flag = true;
+                        currentIndex = i;
+                        break;
+                    }
+
+                if (flag && resultElementsCount > 0)
+                {
+                    resultElements = AddElementInMidOfList(resultElements, element, currentIndex, resultElementsCount);
+                }
+                else
+                    resultElements.Add(element);
+            }
+            return resultElements;
+        }
+
+        private List<Element> AddElementInMidOfList(List<Element> resultElements, Element element, int currentIndex, int resultElementsCount)
+        {
+            List<Element> tempElements = new List<Element>();
+            int removeRangeCount = resultElementsCount - currentIndex;
+            //if (resultElementsCount != 0)
+                tempElements.AddRange(resultElements.GetRange(0, currentIndex));
+            tempElements.Add(element);
+            tempElements.AddRange(resultElements.GetRange(currentIndex, removeRangeCount));
+            return tempElements;
+        }
+        private bool ComparsionStrings(string a, string b)
+        {
+            int minCountString = a.Length > b.Length ? b.Length : a.Length;
+
+            for (int i = 0; i < minCountString; i++)
+                if (a[i] < b[i])
+                    return true;
+                else if (a[i] > b[i])
+                    return false;
+
+            if (a.Length >= b.Length)
+                return false;
+            else
+                return true;
+        }
+
     }
 }
