@@ -62,6 +62,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExcelSpecification.cs" />
     <Compile Include="PDM\ReferenceFiles.cs" />
     <Compile Include="Settings and stamp\DrawingStamp.cs" />
     <Compile Include="PDM\Element.cs" />
