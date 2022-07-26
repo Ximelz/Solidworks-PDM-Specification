@@ -38,7 +38,6 @@
             this.StampButton = new System.Windows.Forms.Button();
             this.exportToExcelButton = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.AddButton = new System.Windows.Forms.Button();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -46,6 +45,7 @@
             this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.AddButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -144,16 +144,6 @@
             this.dataGridView1.Size = new System.Drawing.Size(1035, 555);
             this.dataGridView1.TabIndex = 49;
             // 
-            // AddButton
-            // 
-            this.AddButton.Location = new System.Drawing.Point(12, 12);
-            this.AddButton.Name = "AddButton";
-            this.AddButton.Size = new System.Drawing.Size(142, 23);
-            this.AddButton.TabIndex = 50;
-            this.AddButton.Text = "Добавить элемент";
-            this.AddButton.UseVisualStyleBackColor = true;
-            this.AddButton.Click += new System.EventHandler(this.AddButton_Click);
-            // 
             // Column1
             // 
             this.Column1.HeaderText = "Формат";
@@ -193,6 +183,16 @@
             // 
             this.Column3.HeaderText = "Отсутствующее имя в карте данных";
             this.Column3.Name = "Column3";
+            // 
+            // AddButton
+            // 
+            this.AddButton.Location = new System.Drawing.Point(12, 12);
+            this.AddButton.Name = "AddButton";
+            this.AddButton.Size = new System.Drawing.Size(142, 23);
+            this.AddButton.TabIndex = 50;
+            this.AddButton.Text = "Добавить элемент";
+            this.AddButton.UseVisualStyleBackColor = true;
+            this.AddButton.Click += new System.EventHandler(this.AddButton_Click);
             // 
             // SpecificationCreateForm
             // 

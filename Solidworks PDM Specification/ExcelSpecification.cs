@@ -32,7 +32,6 @@ namespace Solidworks_PDM_Specification
         private WorksheetCollection wc;
         private int listCount;
 
-
         public void exportToExcel(List<Element> elements, string saveFileName, string addFileFormat)
         {
             foreach (Element element in elements)
@@ -55,7 +54,6 @@ namespace Solidworks_PDM_Specification
                 position = 1;
                 maxCellIndex = 61;
                 Lists = 1;
-                //SetStamp(ws, Lists);
                 SetStamp();
                 foreach (KeyValuePair<string, List<Element>> keyValuePair in nameSections)
                 {
@@ -70,7 +68,6 @@ namespace Solidworks_PDM_Specification
                             wc[wc.Count - 1].Copy(wc[wc.Count - 2]);
                             ws = workbook.Worksheets["Specification_sheet_" + Lists];
                             cellIndex = 7;
-                            //SetStamp(ws, Lists);
                             SetStamp();
                         }
                         cellIndex += 2;
@@ -83,8 +80,6 @@ namespace Solidworks_PDM_Specification
                         cell.SetStyle(style);
                         cellIndex += 4;
                         listCount = keyValuePair.Value.Count;
-                        //AddElementsOnSpecificationForm(ref ws, ref cellIndex, ref maxCellIndex, ref listCount, ref position,
-                        //                                keyValuePair.Value, ref Lists, workbook);
                         AddElementsOnSpecificationForm(keyValuePair.Value, workbook);
                     }
                 }
@@ -104,7 +99,6 @@ namespace Solidworks_PDM_Specification
                 }
             }
         }
-        //private void AddElementsOnSpecificationForm(ref Worksheet worksheet, ref int cellIndex, ref int maxIndex, ref int listCount, ref int position, List<Element> elements, ref int Lists, Workbook workbook)
         private void AddElementsOnSpecificationForm(List<Element> elements, Workbook workbook)
         {
             int i = 0;
@@ -120,7 +114,6 @@ namespace Solidworks_PDM_Specification
                     ws = workbook.Worksheets["Specification_sheet_" + Lists];
                     cellIndex = 7;
                     SetStamp();
-                    //SetStamp(ws, Lists);
                 }
                 cell = ws.Cells["E" + cellIndex];
                 cell.PutValue(elements[i].DrawingPaperSize);
@@ -142,7 +135,6 @@ namespace Solidworks_PDM_Specification
 
                 cell = ws.Cells["AI" + cellIndex];
                 if (elements[i].Name.Length > 23)
-                    //SplitDesignation(ws, ref cellIndex, elements[i].Name, cell, elements[i].nameFlag);
                     SplitDesignation(elements[i].Name, elements[i].nameFlag);
                 else
                 {
@@ -161,7 +153,6 @@ namespace Solidworks_PDM_Specification
                 cellIndex += 2;
             }
         }
-        //private void SplitDesignation(Worksheet worksheet, ref int cellIndex, string designation, Cell cell, bool nameFlag)
         private void SplitDesignation(string designation, bool nameFlag)
         {
             string[] designationSplit = designation.Split();
@@ -219,7 +210,6 @@ namespace Solidworks_PDM_Specification
                 }
             }
         }
-        //private void SetStamp(Worksheet worksheet, int Lists)
         private void SetStamp()
         {
             cell = ws.Cells["C66"];
@@ -316,7 +306,6 @@ namespace Solidworks_PDM_Specification
         {
             List<Element> tempElements = new List<Element>();
             int removeRangeCount = resultElementsCount - currentIndex;
-            //if (resultElementsCount != 0)
             tempElements.AddRange(resultElements.GetRange(0, currentIndex));
             tempElements.Add(element);
             tempElements.AddRange(resultElements.GetRange(currentIndex, removeRangeCount));

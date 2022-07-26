@@ -13,6 +13,7 @@ namespace Solidworks_PDM_Specification
         private XML_Convert xml;
         public List<Element> Elements;
         private string currentDirectory;
+        private InteractWithDataGrid interactWithDataGrid;
         private Dictionary<string, int> idSection = new Dictionary<string, int>()
         {
             {"Документация", 0}, {"Комплексы", 0},
@@ -20,11 +21,12 @@ namespace Solidworks_PDM_Specification
             { "Стандартные изделия", 0}, { "Прочие изделия", 0},
             { "Материалы", 0}, { "Комплекты", 0}
         };
-        private Dictionary<string, List<Element>> nameSections;
 
         public SpecificationCreateForm()
         {
             InitializeComponent();
+            interactWithDataGrid = new InteractWithDataGrid(dataGridView1);
+            //dataGridView1.Rows.Add("0", "0", "0", "0", "0", "0", true);
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -33,6 +35,7 @@ namespace Solidworks_PDM_Specification
             stamp = new DrawingStamp();
             xml = new XML_Convert();
             Elements = new List<Element>();
+            //dataGridView1.Rows.Add("0", "0", "0", "0", "0", "0", true);
         }
         private void SettingsButton_Click(object sender, EventArgs e)
         {
@@ -83,7 +86,7 @@ namespace Solidworks_PDM_Specification
             ReferenceFiles refFiles = new ReferenceFiles(stamp.FilePath, settings, stamp, vault);
             Elements = refFiles.GetListElements();
             stamp = refFiles.stamp;
-            UpdateDataGrid(Elements);
+            dataGridView1 = interactWithDataGrid.UpdateDataGrid(Elements, ref idSection);
         }
         private (IEdmVault5, bool) LogginInVault()
         {
@@ -119,7 +122,7 @@ namespace Solidworks_PDM_Specification
                 UpdateSpecificationButton.Enabled = true;
             else
                 UpdateSpecificationButton.Enabled = false;
-            UpdateDataGrid(Elements);
+            dataGridView1 = interactWithDataGrid.UpdateDataGrid(Elements, ref idSection);
         }
         private void SaveFileButton_Click(object sender, EventArgs e)
         {
@@ -129,52 +132,7 @@ namespace Solidworks_PDM_Specification
             DialogSaveResult = saveFileDialog1.ShowDialog();
             if (!(DialogSaveResult == DialogResult.OK))
                 return;
-            xml.Export(GetNewListElements(), stamp, saveFileDialog1.FileName);
-        }
-
-
-        private void UpdateDataGrid(List<Element> elements)
-        {
-            dataGridView1.Rows.Clear();
-            nameSections = new Dictionary<string, List<Element>>()
-            {
-                {"Документация", new List<Element>()}, {"Комплексы", new List<Element>()},
-                {"Сборочные единицы", new List<Element>()}, {"Детали", new List<Element>()},
-                {"Стандартные изделия", new List<Element>()}, {"Прочие изделия", new List<Element>()},
-                {"Материалы", new List<Element>()}, {"Комплекты", new List<Element>()}
-            };
-            int count = 0;
-            foreach (Element element in elements)
-                if (nameSections.ContainsKey(element.Section))
-                {
-                    nameSections[element.Section].Add(element);
-                    count++;
-                }
-            AddRows(nameSections, count);
-        }
-        private void AddRows(Dictionary<string, List<Element>> nameSections, int count)
-        {
-            int i = 0;
-            dataGridView1.Rows.AddCopy(dataGridView1.Rows.Count - 1);
-            foreach (KeyValuePair<string, List<Element>> keyValuePair in nameSections)
-            {
-                idSection[keyValuePair.Key] = dataGridView1.Rows.Count - 2;
-                dataGridView1.Rows[dataGridView1.Rows.Count - 2]
-                    .SetValues("", "", "", keyValuePair.Key);
-                dataGridView1.Rows.AddCopy(dataGridView1.Rows.Count - 2);
-                if (keyValuePair.Value.Count > 0)
-                {
-                    foreach (Element element in keyValuePair.Value)
-                        AddNewRow(element);
-                }
-                i++;
-            }
-        }
-        private void AddNewRow(Element element)
-        {
-            dataGridView1.Rows[dataGridView1.Rows.Count - 2].SetValues(element.DrawingPaperSize, element.Zone,
-                                    element.Designation, element.Name, element.Count.ToString(), element.Note, element.nameFlag); ;
-            dataGridView1.Rows.AddCopy(dataGridView1.Rows.Count - 2);
+            xml.Export(interactWithDataGrid.GetNewListElements(ref idSection), stamp, saveFileDialog1.FileName);
         }
         private void exportToExcelButton_Click(object sender, EventArgs e)
         {
@@ -185,82 +143,114 @@ namespace Solidworks_PDM_Specification
             string saveFileName = saveFileDialog1.FileName;
             string addFileFormat = saveFileName.Substring(saveFileName.Length - 4) == ".xls" ? "" : ".xls";
 
+            List<Element> newListElements = interactWithDataGrid.GetNewListElements(ref idSection);
             ExcelSpecification excelSpecification = new ExcelSpecification(settings, stamp);
-            excelSpecification.exportToExcel(GetNewListElements(), saveFileName, addFileFormat);
+            excelSpecification.exportToExcel(newListElements, saveFileName, addFileFormat);
         }
-        private List<Element> GetNewListElements()
-        {
-            List<Element> elements = new List<Element>();
-            int[] sections = new int[8];
-            string[] nameSections = new string[8];
-            int i = 0;
-            foreach (KeyValuePair<string, int> keyValuePair in idSection)
-            {
-                sections[i] = keyValuePair.Value;
-                nameSections[i] = keyValuePair.Key;
-                i++;
-            }
-            i = 1;
-            int rowsCount = dataGridView1.Rows.Count - 2;
-            for (int j = 1; j < rowsCount; j++)
-                if (i < 8)
-                {
-                    if (j < sections[i])
-                    {
-                        AddElementFromDataGrid(ref elements, j, nameSections[i - 1]);
-                    }
-                    else
-                    {
-                        i++;
-                    }
-                }
 
-            return elements;
-        }
-        private void AddElementFromDataGrid(ref List<Element> Elements, int i, string section)
-        {
-            int currentIndex = Elements.Count;
-            Elements.Add(new Element());
-            Elements[currentIndex].DrawingPaperSize = dataGridView1.Rows[i].Cells[0].Value.ToString();
-            Elements[currentIndex].Zone = dataGridView1.Rows[i].Cells[1].Value.ToString();
-            Elements[currentIndex].Designation = dataGridView1.Rows[i].Cells[2].Value.ToString();
-            Elements[currentIndex].Name = dataGridView1.Rows[i].Cells[3].Value.ToString();
-            if (dataGridView1.Rows[i].Cells[4].Value != null)
-            {
-                if (int.TryParse(dataGridView1.Rows[i].Cells[4].Value.ToString(), out int count))
-                    Elements[currentIndex].Count = count;
-                else
-                    Elements[currentIndex].Count = 0;
-            }
-            else
-                Elements[currentIndex].Count = 0;
 
-            Elements[currentIndex].Note = dataGridView1.Rows[i].Cells[5].Value.ToString();
-            Elements[currentIndex].nameFlag = (bool)dataGridView1.Rows[i].Cells[6].Value;
-            Elements[currentIndex].Section = section;
-        }        
+        //private void UpdateDataGrid(List<Element> elements)
+        //{
+        //    dataGridView1.Rows.Clear();
+        //    nameSections = new Dictionary<string, List<Element>>()
+        //    {
+        //        {"Документация", new List<Element>()}, {"Комплексы", new List<Element>()},
+        //        {"Сборочные единицы", new List<Element>()}, {"Детали", new List<Element>()},
+        //        {"Стандартные изделия", new List<Element>()}, {"Прочие изделия", new List<Element>()},
+        //        {"Материалы", new List<Element>()}, {"Комплекты", new List<Element>()}
+        //    };
+        //    int count = 0;
+        //    foreach (Element element in elements)
+        //        if (nameSections.ContainsKey(element.Section))
+        //        {
+        //            nameSections[element.Section].Add(element);
+        //            count++;
+        //        }
+        //    AddRows(nameSections, count);
+        //}
+        //private void AddRows(Dictionary<string, List<Element>> nameSections, int count)
+        //{
+        //    int i = 0;
+        //    dataGridView1.Rows.AddCopy(dataGridView1.Rows.Count - 1);
+        //    foreach (KeyValuePair<string, List<Element>> keyValuePair in nameSections)
+        //    {
+        //        idSection[keyValuePair.Key] = dataGridView1.Rows.Count - 2;
+        //        dataGridView1.Rows[dataGridView1.Rows.Count - 2]
+        //            .SetValues("", "", "", keyValuePair.Key);
+        //        dataGridView1.Rows.AddCopy(dataGridView1.Rows.Count - 2);
+        //        if (keyValuePair.Value.Count > 0)
+        //        {
+        //            foreach (Element element in keyValuePair.Value)
+        //                AddNewRow(element);
+        //        }
+        //        i++;
+        //    }
+        //}
+        //private void AddNewRow(Element element)
+        //{
+        //    dataGridView1.Rows[dataGridView1.Rows.Count - 2].SetValues(element.DrawingPaperSize, element.Zone,
+        //                            element.Designation, element.Name, element.Count.ToString(), element.Note, element.nameFlag); ;
+        //    dataGridView1.Rows.AddCopy(dataGridView1.Rows.Count - 2);
+        //}
+        //private List<Element> GetNewListElements()
+        //{
+        //    List<Element> elements = new List<Element>();
+        //    int[] sections = new int[8];
+        //    string[] nameSections = new string[8];
+        //    int i = 0;
+        //    foreach (KeyValuePair<string, int> keyValuePair in idSection)
+        //    {
+        //        sections[i] = keyValuePair.Value;
+        //        nameSections[i] = keyValuePair.Key;
+        //        i++;
+        //    }
+        //    i = 1;
+        //    int rowsCount = dataGridView1.Rows.Count - 2;
+        //    for (int j = 1; j < rowsCount; j++)
+        //        if (i < 8)
+        //        {
+        //            if (j < sections[i])
+        //            {
+        //                AddElementFromDataGrid(ref elements, j, nameSections[i - 1]);
+        //            }
+        //            else
+        //            {
+        //                i++;
+        //            }
+        //        }
+
+        //    return elements;
+        //}
+        //private void AddElementFromDataGrid(ref List<Element> Elements, int i, string section)
+        //{
+        //    int currentIndex = Elements.Count;
+        //    Elements.Add(new Element());
+        //    Elements[currentIndex].DrawingPaperSize = dataGridView1.Rows[i].Cells[0].Value.ToString();
+        //    Elements[currentIndex].Zone = dataGridView1.Rows[i].Cells[1].Value.ToString();
+        //    Elements[currentIndex].Designation = dataGridView1.Rows[i].Cells[2].Value.ToString();
+        //    Elements[currentIndex].Name = dataGridView1.Rows[i].Cells[3].Value.ToString();
+        //    if (dataGridView1.Rows[i].Cells[4].Value != null)
+        //    {
+        //        if (int.TryParse(dataGridView1.Rows[i].Cells[4].Value.ToString(), out int count))
+        //            Elements[currentIndex].Count = count;
+        //        else
+        //            Elements[currentIndex].Count = 0;
+        //    }
+        //    else
+        //        Elements[currentIndex].Count = 0;
+
+        //    Elements[currentIndex].Note = dataGridView1.Rows[i].Cells[5].Value.ToString();
+        //    Elements[currentIndex].nameFlag = (bool)dataGridView1.Rows[i].Cells[6].Value;
+        //    Elements[currentIndex].Section = section;
+        //}        
         private void AddButton_Click(object sender, EventArgs e)
         {
-            int index = dataGridView1.CurrentRow.Index;
-            dataGridView1.Rows.InsertCopy(index, index + 1);
-            dataGridView1.Rows[index + 1].SetValues("", "", "", "", "", "");
-            if (idSection["Документация"] > index)
-                idSection["Документация"]++;
-            if (idSection["Комплексы"] > index)
-                idSection["Комплексы"]++;
-            if (idSection["Сборочные единицы"] > index)
-                idSection["Сборочные единицы"]++;
-            if (idSection["Детали"] > index)
-                idSection["Детали"]++;
-            if (idSection["Стандартные изделия"] > index)
-                idSection["Стандартные изделия"]++;
-            if (idSection["Прочие изделия"] > index)
-                idSection["Прочие изделия"]++;
-            if (idSection["Материалы"] > index)
-                idSection["Материалы"]++;
-            if (idSection["Комплекты"] > index)
-                idSection["Комплекты"]++;
+            dataGridView1 = interactWithDataGrid.AddElementToDataGrid(dataGridView1.CurrentRow.Index, ref idSection);            
         }
-        
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }
